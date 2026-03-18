@@ -2,17 +2,26 @@
 
 A real-time dashboard tracking AI developments relevant to software development. Summaries-first, drill-down on demand, multi-source aggregation.
 
-## Tech Stack
+## Tech Stack (Optimized for AI-Driven Development)
 
-- **Framework**: Next.js 15 (App Router, TypeScript)
+- **Framework**: Next.js 15 (App Router, TypeScript strict)
 - **Styling**: Tailwind CSS v4
+- **UI Components**: shadcn/ui (components live in `src/components/ui/`, fully editable)
+- **ORM**: Drizzle ORM (type-safe, SQL-like, predictable)
+- **Validation**: Zod (single source of truth for types + runtime validation)
+- **Database**: Supabase PostgreSQL (free tier, 500MB)
 - **Data Fetching**: RSS feeds + public APIs (GitHub, HackerNews, ArXiv, dev.to)
 - **Summarization**: Google Gemini free tier (15 RPM, 1M tokens/day)
-- **Database**: Supabase free tier (500MB)
 - **Automation**: GitHub Actions (cron every 6 hours)
 - **Hosting**: Vercel free tier
 - **Icons**: lucide-react
 - **Dates**: date-fns
+
+### Why this stack for AI-driven dev
+- **shadcn/ui**: Components are in the codebase, not node_modules - AI can read and edit them
+- **Drizzle**: SQL-like syntax = predictable code generation, type-safe queries
+- **Zod**: Define schema once, derive TypeScript types + validation from it
+- **TypeScript strict**: Compiler catches AI mistakes before runtime
 
 ## Architecture
 
