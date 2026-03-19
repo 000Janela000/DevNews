@@ -54,7 +54,7 @@ async function searchGitHub(
 
   const headers: Record<string, string> = {
     Accept: "application/vnd.github.v3+json",
-    "User-Agent": "AI-Dev-Tracker/1.0",
+    "User-Agent": "DevNews/1.0",
   };
   if (token) {
     headers["Authorization"] = `token ${token}`;

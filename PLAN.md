@@ -1,4 +1,4 @@
-# AI Dev Tracker - Implementation Plan
+# DevNews - Implementation Plan
 
 > **Protocol**: Execute ONE phase at a time. After each phase: sync this plan, re-analyze all remaining phases, assess relevance, re-phase if needed. See CLAUDE.md "Phase Execution Protocol" for full rules.
 

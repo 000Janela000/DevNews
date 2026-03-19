@@ -8,7 +8,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2">
           <Activity className="size-5 text-primary" />
           <span className="text-lg font-semibold tracking-tight">
-            AI Dev Tracker
+            DevNews
           </span>
         </Link>
         <p className="hidden text-sm text-muted-foreground sm:block">

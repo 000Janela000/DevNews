@@ -1,4 +1,4 @@
-# AI Dev Tracker
+# DevNews
 
 A real-time dashboard tracking AI developments relevant to software development. Summaries-first, drill-down on demand, multi-source aggregation.
 

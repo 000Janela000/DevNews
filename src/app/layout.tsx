@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "AI Dev Tracker",
-    template: "%s | AI Dev Tracker",
+    default: "DevNews",
+    template: "%s | DevNews",
   },
   description:
     "Real-time dashboard tracking AI developments relevant to software development. Summaries-first, drill-down on demand.",
@@ -28,17 +28,17 @@ export const metadata: Metadata = {
     "software development",
     "AI news",
   ],
-  authors: [{ name: "AI Dev Tracker" }],
+  authors: [{ name: "DevNews" }],
   openGraph: {
-    title: "AI Dev Tracker",
+    title: "DevNews",
     description:
       "Real-time dashboard tracking AI developments for software engineers",
     type: "website",
-    siteName: "AI Dev Tracker",
+    siteName: "DevNews",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI Dev Tracker",
+    title: "DevNews",
     description:
       "Real-time dashboard tracking AI developments for software engineers",
   },

@@ -1,6 +1,6 @@
 ## Context
 
-The AI Dev Tracker is a greenfield Next.js 15 project with only scaffolding in place (default page, shadcn/ui button, Tailwind config). The data foundation must be built from scratch to support the full product vision: a real-time, filterable dashboard that aggregates AI developments from 10+ sources and presents AI-generated summaries.
+DevNews is a greenfield Next.js 15 project with only scaffolding in place (default page, shadcn/ui button, Tailwind config). The data foundation must be built from scratch to support the full product vision: a real-time, filterable dashboard that aggregates AI developments from 10+ sources and presents AI-generated summaries.
 
 The project operates entirely on free tiers: Supabase PostgreSQL (500MB), Gemini Flash-Lite (1000 RPD), GitHub Actions (2000 min/month), Vercel (10s function timeout). Every architectural decision must respect these constraints.
 

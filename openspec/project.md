@@ -1,4 +1,4 @@
-# AI Dev Tracker - Project Context
+# DevNews - Project Context
 
 ## Overview
 

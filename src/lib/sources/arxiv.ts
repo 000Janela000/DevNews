@@ -31,7 +31,7 @@ async function fetchArxivCategory(
   try {
     const res = await fetch(url.toString(), {
       signal: controller.signal,
-      headers: { "User-Agent": "AI-Dev-Tracker/1.0" },
+      headers: { "User-Agent": "DevNews/1.0" },
     });
     clearTimeout(timeout);
 
