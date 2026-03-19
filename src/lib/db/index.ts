@@ -2,7 +2,7 @@ export { getDb } from "./client";
 export { items, fetchLogs } from "./schema";
 export type { ItemRow, NewItemRow, FetchLogRow } from "./schema";
 export { normalizeItemUrl, isTitleDuplicate, deduplicateItems } from "./dedup";
-export { upsertItems, logFetchRun, getLastFetchTime } from "./mutations";
+export { upsertItems, logFetchRun, getLastFetchTime, updateItemSummary } from "./mutations";
 export {
   getItemsByCategory,
   getItemsByDateRange,

@@ -1,0 +1,41 @@
+name: Data Pipeline
+
+on:
+  schedule:
+    # Run every 6 hours at :17 to avoid top-of-hour congestion
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      skip_summarize:
+        description: 'Skip summarization step'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  fetch-and-summarize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Fetch from all sources
+        run: npx tsx --tsconfig tsconfig.json scripts/pipeline.ts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Summarize new items
+        if: ${{ github.event.inputs.skip_summarize != 'true' }}
+        run: npx tsx --tsconfig tsconfig.json scripts/summarize.ts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

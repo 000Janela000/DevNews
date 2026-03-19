@@ -82,6 +82,26 @@ export async function logFetchRun(
   }
 }
 
+export async function updateItemSummary(
+  itemId: string,
+  summary: string,
+  category: string,
+  importance: number,
+  tags: string[]
+): Promise<void> {
+  const db = getDb();
+  await db
+    .update(items)
+    .set({
+      summary,
+      category,
+      importance,
+      tags,
+      summarizedAt: sql`now()`,
+    })
+    .where(sql`${items.id} = ${itemId}`);
+}
+
 export async function getLastFetchTime(): Promise<Date | null> {
   const db = getDb();
   const result = await db

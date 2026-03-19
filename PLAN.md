@@ -64,7 +64,7 @@
 
 ---
 
-## Phase 4: Dashboard UI - Main View `[ ]`
+## Phase 4: Dashboard UI - Main View `[x]`
 
 **Goal**: Build the primary dashboard that users see - the summary view.
 
@@ -85,7 +85,7 @@
 
 ---
 
-## Phase 5: Detail View & Navigation `[ ]`
+## Phase 5: Detail View & Navigation `[x]`
 
 **Goal**: Build the drill-down view for individual items.
 
@@ -103,7 +103,7 @@
 
 ---
 
-## Phase 6: AI Summarization `[ ]`
+## Phase 6: AI Summarization `[x]`
 
 **Goal**: Add LLM-powered summarization for fetched content.
 
@@ -121,7 +121,7 @@
 
 ---
 
-## Phase 7: GitHub Actions Automation `[ ]`
+## Phase 7: GitHub Actions Automation `[x]`
 
 **Goal**: Automate the data pipeline to run on a schedule.
 
@@ -183,3 +183,5 @@
 |------|--------|--------|
 | 2026-03-18 | Initial plan created | Project kickoff - 9 phases |
 | 2026-03-19 | Phases 1-3 completed | Core types, 4 source adapters (RSS/HN/GitHub/ArXiv), Drizzle storage layer, dedup pipeline, pipeline script |
+| 2026-03-19 | Phases 4-5 completed | Dashboard UI (header, category tabs, time filter, search, item cards, loading/empty states) + detail view with related items |
+| 2026-03-19 | Phases 6-7 completed | Gemini Flash-Lite summarization (prompt engineering, Zod validation, rate limiting, fallback) + GitHub Actions cron workflow |
