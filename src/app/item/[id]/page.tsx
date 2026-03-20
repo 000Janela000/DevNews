@@ -17,6 +17,7 @@ import { CATEGORY_BADGE_COLORS } from "@/components/dashboard/category-tabs";
 import { CATEGORY_LABELS, type Category } from "@/lib/types";
 import { getItemById, getItemsByCategory, getItemsByDateRange } from "@/lib/db/queries";
 import { clusterItems } from "@/lib/clustering";
+import { stripHtml, isContentTruncated } from "@/lib/html";
 
 export const dynamic = "force-dynamic";
 
@@ -166,8 +167,13 @@ export default async function ItemDetailPage({ params }: PageProps) {
           {item.content && (
             <div className="prose prose-sm prose-invert max-w-none">
               <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
-                {item.content.replace(/<[^>]*>/g, "")}
+                {stripHtml(item.content, 10000)}
               </p>
+              {isContentTruncated(item.content) && (
+                <p className="mt-2 text-xs text-muted-foreground/50 italic">
+                  Content truncated — open the original for the full article.
+                </p>
+              )}
             </div>
           )}
 

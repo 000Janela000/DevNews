@@ -34,31 +34,39 @@ export async function upsertItems(
       publishedAt: item.publishedAt,
     }));
 
-    const result = await db
+    // Check which URLs already exist to distinguish inserts from updates
+    const normalizedUrls = rows.map((r) => r.urlNormalized);
+    const existing = await db
+      .select({ urlNormalized: items.urlNormalized })
+      .from(items)
+      .where(sql`${items.urlNormalized} IN (${sql.join(normalizedUrls.map((u) => sql`${u}`), sql`, `)})`);
+    const existingSet = new Set(existing.map((e) => e.urlNormalized));
+
+    await db
       .insert(items)
       .values(rows)
       .onConflictDoUpdate({
         target: items.urlNormalized,
         set: {
-          // Update content only if new version is longer
           content: sql`CASE
             WHEN LENGTH(COALESCE(excluded.content, '')) > LENGTH(COALESCE(${items.content}, ''))
             THEN excluded.content
             ELSE ${items.content}
           END`,
-          // Never overwrite existing summary
           summary: sql`COALESCE(${items.summary}, excluded.summary)`,
           fetchedAt: sql`now()`,
         },
-      })
-      .returning({ id: items.id });
+      });
 
-    // Approximate: all returned rows were either inserted or updated
-    inserted += result.length;
+    for (const row of rows) {
+      if (existingSet.has(row.urlNormalized)) {
+        updated++;
+      } else {
+        inserted++;
+      }
+    }
   }
 
-  // The actual split between insert/update isn't easily determined with
-  // onConflictDoUpdate, so we return total as inserted (consumer uses total)
   return { inserted, updated };
 }
 

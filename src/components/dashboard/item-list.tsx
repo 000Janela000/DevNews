@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { Search, Inbox } from "lucide-react";
 import { startOfDay, startOfWeek, startOfMonth } from "date-fns";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,32 @@ export function ItemList({ items, loading }: ItemListProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>("week");
   const [search, setSearch] = useState("");
   const [scope, setScope] = useState<ScopeFilter>("dev");
+  const [serverResults, setServerResults] = useState<ItemRow[]>([]);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Debounced server search for queries beyond loaded items
+  const doServerSearch = useCallback((query: string) => {
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    if (query.trim().length < 3) {
+      setServerResults([]);
+      return;
+    }
+    searchTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`);
+        if (res.ok) {
+          const data = await res.json();
+          setServerResults(data.items ?? []);
+        }
+      } catch {
+        setServerResults([]);
+      }
+    }, 400);
+  }, []);
+
+  useEffect(() => {
+    doServerSearch(search);
+  }, [search, doServerSearch]);
 
   // Batch-load user states for all items
   const itemIds = useMemo(() => items.map((i) => i.id), [items]);
@@ -78,7 +104,7 @@ export function ItemList({ items, loading }: ItemListProps) {
       result = result.filter((i) => new Date(i.publishedAt) >= start);
     }
 
-    // Search filter
+    // Search filter (client-side on loaded items)
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
@@ -87,10 +113,20 @@ export function ItemList({ items, loading }: ItemListProps) {
           i.content?.toLowerCase().includes(q) ||
           i.summary?.toLowerCase().includes(q)
       );
+
+      // Merge server search results (deduped by id)
+      if (serverResults.length > 0) {
+        const existingIds = new Set(result.map((i) => i.id));
+        for (const sr of serverResults) {
+          if (!existingIds.has(sr.id)) {
+            result.push(sr);
+          }
+        }
+      }
     }
 
     return result;
-  }, [items, selectedCategory, timeRange, search, scope]);
+  }, [items, selectedCategory, timeRange, search, scope, serverResults]);
 
   if (loading) {
     return <LoadingSkeleton />;

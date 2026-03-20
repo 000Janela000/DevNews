@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { CATEGORY_LABELS, type Category } from "@/lib/types";
 import { CATEGORY_BADGE_COLORS } from "./category-tabs";
 import { ItemActions } from "./item-actions";
+import { stripHtml } from "@/lib/html";
 import type { UserAction } from "@/lib/db/user-state";
 
 interface TrackedItemCardProps {
@@ -51,9 +52,6 @@ function getSourceColor(sourceType: string): string {
   return colors[sourceType] ?? "bg-muted text-muted-foreground";
 }
 
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, "").slice(0, 200);
-}
 
 export function TrackedItemCard({
   id,
