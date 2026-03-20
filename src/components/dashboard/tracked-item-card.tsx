@@ -68,7 +68,7 @@ export function TrackedItemCard({
   userStates,
 }: TrackedItemCardProps) {
   return (
-    <div className="group relative">
+    <div className="group relative overflow-hidden">
       <Link
         href={`/item/${id}`}
         className="block rounded-lg border border-transparent p-4 transition-all hover:border-border/50 hover:bg-muted/30"
@@ -82,7 +82,7 @@ export function TrackedItemCard({
             )}
             title={CATEGORY_LABELS[category]}
           />
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 pr-16">
             <h3 className="text-[15px] font-medium leading-snug tracking-tight">
               {title}
             </h3>
@@ -128,7 +128,7 @@ export function TrackedItemCard({
       </Link>
 
       {/* Actions — appear on hover */}
-      <div className="absolute right-3 top-3 flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="absolute right-2 top-2 flex items-center gap-0.5 rounded-md bg-background/90 p-1 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100">
         <ItemActions itemId={id} initialStates={userStates} compact />
         <a
           href={url}
