@@ -29,6 +29,7 @@ export const items = pgTable(
       .defaultNow(),
     summarizedAt: timestamp("summarized_at", { withTimezone: true }),
     significanceScore: real("significance_score"),
+    devRelevance: text("dev_relevance"), // "direct" | "indirect" | "general"
   },
   (table) => [uniqueIndex("items_url_normalized_idx").on(table.urlNormalized)]
 );
@@ -44,6 +45,23 @@ export const fetchLogs = pgTable("fetch_logs", {
   error: text("error"),
   pipelineRunId: text("pipeline_run_id").notNull(),
 });
+
+export const repoCandidates = pgTable("repo_candidates", {
+  id: text("id").primaryKey(),
+  repoUrl: text("repo_url").notNull(),
+  repoName: text("repo_name").notNull(),
+  firstSeen: timestamp("first_seen", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  timesSeen: integer("times_seen").notNull().default(1),
+  lastSeen: timestamp("last_seen", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  promoted: integer("promoted").notNull().default(0), // 0=candidate, 1=promoted
+  promotedAt: timestamp("promoted_at", { withTimezone: true }),
+});
+
+export type RepoCandidateRow = typeof repoCandidates.$inferSelect;
 
 export type ItemRow = typeof items.$inferSelect;
 export type NewItemRow = typeof items.$inferInsert;

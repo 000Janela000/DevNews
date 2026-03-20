@@ -3,12 +3,16 @@ import { getGeminiClient, RATE_LIMIT } from "./client";
 import { SYSTEM_PROMPT, buildSummarizationPrompt } from "./prompt";
 import { CategoryEnum } from "@/lib/types";
 
+export const DevRelevanceEnum = z.enum(["direct", "indirect", "general"]);
+export type DevRelevance = z.infer<typeof DevRelevanceEnum>;
+
 const SummaryResponseSchema = z.object({
   summary: z.string().min(10),
   category: CategoryEnum,
   importance: z.number().int().min(1).max(5),
   tags: z.array(z.string()).default([]),
   keyTakeaway: z.string().optional(),
+  devRelevance: DevRelevanceEnum.default("general"),
 });
 
 export type SummaryResponse = z.infer<typeof SummaryResponseSchema>;
@@ -66,6 +70,7 @@ export async function summarizeItem(
     importance: 2,
     tags: [],
     keyTakeaway: undefined,
+    devRelevance: "general" as const,
   };
 }
 

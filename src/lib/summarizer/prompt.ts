@@ -29,6 +29,7 @@ Respond with valid JSON matching this exact schema:
   "category": "one of: models_releases, tools_frameworks, practices_approaches, industry_trends, research_papers",
   "importance": <number 1-5 where 1=minor/niche, 2=notable, 3=significant, 4=major impact, 5=critical/breaking>,
   "tags": ["3-6 relevant lowercase tags"],
-  "keyTakeaway": "Single most important thing a developer should know"
+  "keyTakeaway": "Single most important thing a developer should know",
+  "devRelevance": "direct = directly affects how developers write code (model release, API change, new tool, SDK update, benchmark). indirect = affects dev ecosystem but not code directly (pricing change, funding, company pivot, regulation). general = broader AI news with no immediate dev impact (opinion pieces, drama, academic theory)"
 }`;
 }

@@ -37,7 +37,8 @@ async function main() {
         result.summary,
         result.category,
         result.importance,
-        result.tags
+        result.tags,
+        result.devRelevance
       );
     }
   );

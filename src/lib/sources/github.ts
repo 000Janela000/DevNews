@@ -1,5 +1,6 @@
 import { nanoid } from "@/lib/id";
 import type { DataSource, FetchResult, NewTrackedItem } from "@/lib/types";
+import { trackCandidate } from "@/lib/discovery/candidates";
 
 const GITHUB_SEARCH_URL = "https://api.github.com/search/repositories";
 const RATE_DELAY_MS = 2_100; // 2.1s between requests (30 req/min limit)
@@ -134,6 +135,11 @@ export const githubAdapter: DataSource = {
         if (seenIds.has(repo.id)) continue;
         seenIds.add(repo.id);
         items.push(repoToTrackedItem(repo));
+
+        // Track as candidate for auto-discovery
+        try {
+          await trackCandidate(repo.html_url, repo.full_name);
+        } catch { /* non-critical */ }
       }
     }
 

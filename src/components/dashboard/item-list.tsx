@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Search, Inbox } from "lucide-react";
 import { startOfDay, startOfWeek, startOfMonth } from "date-fns";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Category } from "@/lib/types";
 import type { ItemRow } from "@/lib/db";
@@ -16,12 +17,15 @@ interface ItemListProps {
   loading?: boolean;
 }
 
+export type ScopeFilter = "dev" | "dev+industry" | "everything";
+
 export function ItemList({ items, loading }: ItemListProps) {
   const [selectedCategory, setSelectedCategory] = useState<Category | "all">(
     "all"
   );
   const [timeRange, setTimeRange] = useState<TimeRange>("week");
   const [search, setSearch] = useState("");
+  const [scope, setScope] = useState<ScopeFilter>("dev");
 
   // Compute counts per category
   const counts = useMemo(() => {
@@ -36,6 +40,20 @@ export function ItemList({ items, loading }: ItemListProps) {
   // Filter items
   const filtered = useMemo(() => {
     let result = items;
+
+    // Scope filter (dev relevance)
+    if (scope === "dev") {
+      result = result.filter(
+        (i) => !i.devRelevance || i.devRelevance === "direct"
+      );
+    } else if (scope === "dev+industry") {
+      result = result.filter(
+        (i) =>
+          !i.devRelevance ||
+          i.devRelevance === "direct" ||
+          i.devRelevance === "indirect"
+      );
+    }
 
     // Category filter
     if (selectedCategory !== "all") {
@@ -67,7 +85,7 @@ export function ItemList({ items, loading }: ItemListProps) {
     }
 
     return result;
-  }, [items, selectedCategory, timeRange, search]);
+  }, [items, selectedCategory, timeRange, search, scope]);
 
   if (loading) {
     return <LoadingSkeleton />;
@@ -83,7 +101,31 @@ export function ItemList({ items, loading }: ItemListProps) {
           counts={counts}
         />
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <TimeFilter selected={timeRange} onSelect={setTimeRange} />
+          <div className="flex items-center gap-3">
+            <TimeFilter selected={timeRange} onSelect={setTimeRange} />
+            <div className="flex gap-0.5 rounded-md border border-border p-0.5">
+              {(
+                [
+                  ["dev", "Dev Focus"],
+                  ["dev+industry", "Dev + Industry"],
+                  ["everything", "Everything"],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  onClick={() => setScope(value)}
+                  className={cn(
+                    "rounded px-2 py-0.5 text-[11px] font-medium transition-colors",
+                    scope === value
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input

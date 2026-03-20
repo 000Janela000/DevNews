@@ -87,7 +87,8 @@ export async function updateItemSummary(
   summary: string,
   category: string,
   importance: number,
-  tags: string[]
+  tags: string[],
+  devRelevance?: string
 ): Promise<void> {
   const db = getDb();
   await db
@@ -97,6 +98,7 @@ export async function updateItemSummary(
       category,
       importance,
       tags,
+      devRelevance: devRelevance ?? null,
       summarizedAt: sql`now()`,
     })
     .where(sql`${items.id} = ${itemId}`);

@@ -9,6 +9,7 @@ import { nanoid } from "@/lib/id";
 import { fetchAllSources } from "@/lib/sources";
 import { deduplicateItems, upsertItems, logFetchRun, getLastFetchTime, updateSignificanceScores, pruneOldItems } from "@/lib/db";
 import { calculateSignificanceScore } from "@/lib/scoring";
+import { promoteEligibleCandidates } from "@/lib/discovery/candidates";
 
 const DEFAULT_LOOKBACK_HOURS = 24;
 
@@ -94,7 +95,17 @@ async function main() {
     console.warn("[Pipeline] Scoring failed (non-critical)");
   }
 
-  // Step 7: Prune old data (keep Supabase under 500MB)
+  // Step 7: Auto-discover new repos for release watchlist
+  try {
+    const promoted = await promoteEligibleCandidates();
+    if (promoted.length > 0) {
+      console.log(`[Pipeline] Auto-discovered ${promoted.length} new repos: ${promoted.join(", ")}`);
+    }
+  } catch {
+    console.warn("[Pipeline] Auto-discovery failed (non-critical)");
+  }
+
+  // Step 8: Prune old data (keep Supabase under 500MB)
   try {
     const pruned = await pruneOldItems(90);
     if (pruned > 0) {
