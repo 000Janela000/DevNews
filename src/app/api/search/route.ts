@@ -10,7 +10,9 @@ export async function GET(request: NextRequest) {
   try {
     const items = await searchItems(q.trim(), 50);
     return NextResponse.json({ items });
-  } catch {
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error(`[Search] Error for query "${q}": ${msg}`);
     return NextResponse.json(
       { error: "Search unavailable" },
       { status: 503 }

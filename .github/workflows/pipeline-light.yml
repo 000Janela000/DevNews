@@ -2,8 +2,8 @@ name: Light Pipeline (Fast Sources)
 
 on:
   schedule:
-    # Every 2 hours at :37 to offset from full pipeline
-    - cron: '37 */2 * * *'
+    # Every 3 hours at :37 to stay within 2000 min/month Actions budget
+    - cron: '37 */3 * * *'
   workflow_dispatch: {}
 
 jobs:

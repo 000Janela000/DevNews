@@ -9,7 +9,7 @@ import { nanoid } from "@/lib/id";
 import { fetchAllSources } from "@/lib/sources";
 import { deduplicateItems, upsertItems, logFetchRun, getLastFetchTime, updateSignificanceScores, pruneOldItems } from "@/lib/db";
 import { calculateSignificanceScore } from "@/lib/scoring";
-import { promoteEligibleCandidates } from "@/lib/discovery/candidates";
+import { promoteEligibleCandidates, restorePromotedCandidates } from "@/lib/discovery/candidates";
 
 const DEFAULT_LOOKBACK_HOURS = 24;
 
@@ -21,6 +21,16 @@ async function main() {
   console.log(`Pipeline Run: ${pipelineRunId}`);
   console.log(`Started: ${startedAt.toISOString()}`);
   console.log(`========================================\n`);
+
+  // Step 0: Restore previously promoted repo candidates
+  try {
+    const restored = await restorePromotedCandidates();
+    if (restored.length > 0) {
+      console.log(`[Pipeline] Restored ${restored.length} promoted repos: ${restored.join(", ")}`);
+    }
+  } catch {
+    console.warn("[Pipeline] Could not restore promoted candidates (non-critical)");
+  }
 
   // Step 1: Determine since date
   let since: Date;

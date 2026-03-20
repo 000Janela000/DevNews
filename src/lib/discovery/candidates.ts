@@ -6,6 +6,24 @@ import { RELEASE_WATCHLIST } from "@/lib/sources/github-releases";
 
 const PROMOTION_THRESHOLD = 3; // Appear 3+ times → auto-promote
 
+/** Restore previously promoted candidates to the runtime watchlist */
+export async function restorePromotedCandidates(): Promise<string[]> {
+  const db = getDb();
+  const promoted = await db
+    .select({ repoName: repoCandidates.repoName })
+    .from(repoCandidates)
+    .where(sql`${repoCandidates.promoted} = 1`);
+
+  const restored: string[] = [];
+  for (const { repoName } of promoted) {
+    if (!RELEASE_WATCHLIST.includes(repoName)) {
+      RELEASE_WATCHLIST.push(repoName);
+      restored.push(repoName);
+    }
+  }
+  return restored;
+}
+
 /** Track a repo as a candidate for the release watchlist */
 export async function trackCandidate(
   repoUrl: string,
