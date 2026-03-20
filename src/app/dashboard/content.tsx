@@ -1,12 +1,24 @@
 "use client";
 
-import { ItemList } from "@/components/dashboard/item-list";
+import { BriefingSection } from "@/components/dashboard/briefing-section";
+import { MoreItemsSection } from "@/components/dashboard/more-items-section";
 import type { ItemRow } from "@/lib/db";
 
 interface DashboardContentProps {
-  items: ItemRow[];
+  briefingItems: (ItemRow & { readingTimeMin: number })[];
+  remainingItems: ItemRow[];
+  totalMinutes: number;
 }
 
-export function DashboardContent({ items }: DashboardContentProps) {
-  return <ItemList items={items} />;
+export function DashboardContent({
+  briefingItems,
+  remainingItems,
+  totalMinutes,
+}: DashboardContentProps) {
+  return (
+    <div className="space-y-6">
+      <BriefingSection items={briefingItems} totalMinutes={totalMinutes} />
+      <MoreItemsSection items={remainingItems} />
+    </div>
+  );
 }

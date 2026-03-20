@@ -1,5 +1,4 @@
 import { Header } from "@/components/dashboard/header";
-import { HeroSection } from "@/components/dashboard/hero-section";
 import { StatsBar } from "@/components/dashboard/stats-bar";
 import { DashboardContent } from "./content";
 import {
@@ -8,6 +7,7 @@ import {
   getItemCounts,
 } from "@/lib/db/queries";
 import { getUser } from "@/lib/supabase/user";
+import { selectBriefingItems } from "@/lib/briefing";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +28,8 @@ export default async function DashboardPage() {
   }
 
   const totalItems = counts.reduce((sum, c) => sum + c.count, 0);
+  const { briefingItems, remainingItems, totalMinutes } =
+    selectBriefingItems(items);
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,8 +43,11 @@ export default async function DashboardPage() {
           </div>
         )}
         <StatsBar counts={counts} totalItems={totalItems} />
-        <HeroSection items={items} />
-        <DashboardContent items={items} />
+        <DashboardContent
+          briefingItems={briefingItems}
+          remainingItems={remainingItems}
+          totalMinutes={totalMinutes}
+        />
       </main>
     </div>
   );
