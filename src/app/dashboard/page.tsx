@@ -18,7 +18,13 @@ export default async function DashboardPage() {
   let dbError = false;
 
   try {
-    const user = await getUser();
+    let user = null;
+    try {
+      user = await getUser();
+    } catch {
+      // Auth not configured or failed — continue without user
+    }
+
     const itemsQuery = user
       ? getRecentItemsExcludingRead(user.id, 200)
       : getRecentItems(200);
