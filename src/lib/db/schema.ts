@@ -61,7 +61,28 @@ export const repoCandidates = pgTable("repo_candidates", {
   promotedAt: timestamp("promoted_at", { withTimezone: true }),
 });
 
+export const userState = pgTable(
+  "user_state",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id").notNull(),
+    itemId: text("item_id").notNull(),
+    action: text("action").notNull(), // 'read' | 'read_later' | 'saved'
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("user_state_user_item_action_idx").on(
+      table.userId,
+      table.itemId,
+      table.action
+    ),
+  ]
+);
+
 export type RepoCandidateRow = typeof repoCandidates.$inferSelect;
+export type UserStateRow = typeof userState.$inferSelect;
 
 export type ItemRow = typeof items.$inferSelect;
 export type NewItemRow = typeof items.$inferInsert;

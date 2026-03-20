@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Activity, Sparkles } from "lucide-react";
 import { HealthIndicator } from "./health-indicator";
+import { UserMenu } from "./user-menu";
 
 export function Header() {
   return (
@@ -19,6 +20,7 @@ export function Header() {
             <Sparkles className="h-4 w-4" />
             <span>Weekly Digest</span>
           </Link>
+          <UserMenu />
         </div>
       </div>
     </header>
