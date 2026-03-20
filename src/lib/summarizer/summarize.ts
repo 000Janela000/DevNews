@@ -1,5 +1,5 @@
 import { z } from "zod/v4";
-import { getGeminiClient, RATE_LIMIT } from "./client";
+import { generateWithFallback, type ProviderName } from "./providers";
 import { SYSTEM_PROMPT, buildSummarizationPrompt } from "./prompt";
 import { CategoryEnum } from "@/lib/types";
 
@@ -28,51 +28,49 @@ function fallbackSummary(content: string): string {
   return clean.slice(0, 200).trim() + "...";
 }
 
+export interface SummarizeItemResult {
+  response: SummaryResponse;
+  provider: ProviderName;
+}
+
 export async function summarizeItem(
   title: string,
   content: string,
   source: string,
   sourceType: string
-): Promise<SummaryResponse> {
-  const client = getGeminiClient();
+): Promise<SummarizeItemResult> {
   const prompt = buildSummarizationPrompt(title, content, source, sourceType);
 
   try {
-    const response = await client.models.generateContent({
-      model: RATE_LIMIT.model,
-      contents: prompt,
-      config: {
-        systemInstruction: SYSTEM_PROMPT,
-        responseMimeType: "application/json",
-      },
-    });
-
-    const text = response.text ?? "{}";
+    const result = await generateWithFallback(prompt, SYSTEM_PROMPT);
 
     // Parse and validate with Zod
-    const parsed = SummaryResponseSchema.safeParse(JSON.parse(text));
+    const parsed = SummaryResponseSchema.safeParse(JSON.parse(result.text));
     if (parsed.success) {
-      return parsed.data;
+      return { response: parsed.data, provider: result.provider };
     }
 
     console.warn(
-      `[Summarizer] Invalid response structure for "${title}":`,
+      `[Summarizer] Invalid response from ${result.provider} for "${title}":`,
       parsed.error.message
     );
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error(`[Summarizer] API error for "${title}": ${msg}`);
+    console.error(`[Summarizer] All providers failed for "${title}": ${msg}`);
   }
 
   // Fallback: generate basic summary without AI
   return {
-    summary: fallbackSummary(content || title),
-    category: "industry_trends",
-    importance: 2,
-    tags: [],
-    keyTakeaway: undefined,
-    devRelevance: "general" as const,
-    isAIRelated: true,
+    response: {
+      summary: fallbackSummary(content || title),
+      category: "industry_trends",
+      importance: 2,
+      tags: [],
+      keyTakeaway: undefined,
+      devRelevance: "general" as const,
+      isAIRelated: true,
+    },
+    provider: "fallback",
   };
 }
 
@@ -107,25 +105,37 @@ export async function summarizeBatch(
     usedFallback: 0,
   };
 
+  let lastDelayMs = 0;
+
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    if (i > 0) {
-      await delay(RATE_LIMIT.delayBetweenRequestsMs);
+    if (i > 0 && lastDelayMs > 0) {
+      await delay(lastDelayMs);
     }
 
     console.log(
       `[Summarizer] (${i + 1}/${items.length}) "${item.title.slice(0, 60)}..."`
     );
 
-    const result = await summarizeItem(
+    const { response, provider } = await summarizeItem(
       item.title,
       item.content ?? item.title,
       item.source,
       item.sourceType
     );
 
+    // Use the rate delay from whichever provider succeeded
+    lastDelayMs = provider === "fallback" ? 0 : { groq: 4_000, gemini: 6_500 }[provider];
+
+    const providerTag = provider === "fallback" ? " [local fallback]" : ` [${provider}]`;
+    console.log(`  -> ${providerTag}`);
+
+    if (provider === "fallback") {
+      stats.usedFallback++;
+    }
+
     try {
-      await onResult(item.id, result);
+      await onResult(item.id, response);
       stats.succeeded++;
     } catch (error) {
       console.error(

@@ -8,9 +8,9 @@
 import { getUnsummarizedItems, updateItemSummary } from "@/lib/db";
 import { summarizeBatch } from "@/lib/summarizer";
 
-// Gemini free tier: 20 requests/day for flash-lite
-// With 4 cron runs/day, budget 5 per run to stay safe
-const MAX_ITEMS = 5;
+// Multi-provider: Groq (~500K tokens/day) + Gemini fallback (250 RPD)
+// Safety cap per run to prevent runaway processing on large backlogs
+const MAX_ITEMS = 200;
 
 async function main() {
   console.log(`\n[Summarizer] Fetching up to ${MAX_ITEMS} unsummarized items...`);
@@ -52,6 +52,7 @@ async function main() {
   console.log(`  Processed: ${stats.processed}`);
   console.log(`  Succeeded: ${stats.succeeded}`);
   console.log(`  Failed: ${stats.failed}`);
+  console.log(`  Used local fallback: ${stats.usedFallback}`);
 }
 
 main().catch((error) => {
