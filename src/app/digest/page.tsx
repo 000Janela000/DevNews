@@ -98,7 +98,7 @@ export default async function DigestPage() {
             <span>
               {format(weekStart, "MMM d")} – {format(weekEnd, "MMM d, yyyy")}
             </span>
-            <span className="text-muted-foreground/50">·</span>
+            <span className="text-muted-foreground">·</span>
             <span>{totalItems} items tracked this week</span>
           </div>
         </div>
@@ -187,6 +187,7 @@ export default async function DigestPage() {
                             <Link
                               href={`/item/${item.id}`}
                               className="text-sm font-medium leading-snug hover:text-primary"
+                              aria-label={item.title}
                             >
                               {item.title}
                             </Link>
@@ -195,7 +196,7 @@ export default async function DigestPage() {
                                 {item.summary}
                               </p>
                             )}
-                            <p className="mt-1.5 text-[11px] text-muted-foreground/70">
+                            <p className="mt-1.5 text-[11px] text-muted-foreground">
                               {formatDistanceToNow(
                                 new Date(item.publishedAt),
                                 { addSuffix: true }
@@ -207,6 +208,7 @@ export default async function DigestPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="shrink-0 rounded-md p-1.5 text-muted-foreground opacity-0 hover:bg-muted group-hover:opacity-100"
+                            aria-label={`Read: ${item.title}`}
                           >
                             <ExternalLink className="size-3.5" />
                           </a>

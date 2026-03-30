@@ -39,11 +39,11 @@ export default async function ReadLaterPage() {
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16 text-center">
-            <Clock className="size-10 text-muted-foreground/30" />
+            <Clock className="size-10 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
               No items in your reading queue
             </p>
-            <p className="text-xs text-muted-foreground/70">
+            <p className="text-xs text-muted-foreground">
               Click the clock icon on any item to add it here
             </p>
           </div>
@@ -70,6 +70,7 @@ export default async function ReadLaterPage() {
                     <Link
                       href={`/item/${item.id}`}
                       className="text-sm font-medium leading-snug hover:text-primary"
+                      aria-label={item.title}
                     >
                       {item.title}
                     </Link>
@@ -78,7 +79,7 @@ export default async function ReadLaterPage() {
                         {item.summary}
                       </p>
                     )}
-                    <p className="mt-1.5 text-[11px] text-muted-foreground/70">
+                    <p className="mt-1.5 text-[11px] text-muted-foreground">
                       Added{" "}
                       {formatDistanceToNow(new Date(item.actionDate), {
                         addSuffix: true,
@@ -90,6 +91,7 @@ export default async function ReadLaterPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="shrink-0 rounded-md p-1.5 text-muted-foreground opacity-0 hover:bg-muted group-hover:opacity-100"
+                    aria-label={`Read: ${item.title}`}
                   >
                     <ExternalLink className="size-3.5" />
                   </a>

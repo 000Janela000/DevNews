@@ -23,7 +23,9 @@ export function MoreItemsSection({ items }: MoreItemsSectionProps) {
     <div className="mt-8 border-t border-border/30 pt-4">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between py-2 text-sm text-muted-foreground/60 transition-colors hover:text-muted-foreground"
+        className="flex w-full items-center justify-between py-2 text-sm text-muted-foreground transition-colors hover:text-muted-foreground"
+        aria-label={expanded ? "Show fewer items" : `Show ${items.length} more items`}
+        aria-expanded={expanded}
       >
         <span>
           {items.length} more item{items.length !== 1 ? "s" : ""}

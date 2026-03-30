@@ -47,6 +47,7 @@ export function Header() {
             <button
               onClick={() => setSearchOpen(true)}
               className="rounded-md p-1.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+              aria-label="Search articles"
             >
               <Search className="size-3.5" />
             </button>
@@ -55,7 +56,7 @@ export function Header() {
           <Link
             href="/digest"
             className="rounded-md p-1.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
-            title="Weekly Digest"
+            aria-label="Weekly digest"
           >
             <Sparkles className="size-3.5" />
           </Link>

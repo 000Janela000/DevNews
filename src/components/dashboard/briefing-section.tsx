@@ -39,12 +39,12 @@ export function BriefingSection({ items, totalMinutes }: BriefingSectionProps) {
           <h1 className="text-lg font-semibold tracking-tight">
             Your Briefing
           </h1>
-          <p className="mt-0.5 text-xs text-muted-foreground/60">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {items.length} items curated for you
           </p>
         </div>
         <div className="flex items-center gap-1.5 rounded-full bg-muted/50 px-3 py-1">
-          <Clock className="size-3 text-muted-foreground/60" />
+          <Clock className="size-3 text-muted-foreground" />
           <span className="text-xs font-medium text-muted-foreground">
             ~{totalMinutes}m
           </span>

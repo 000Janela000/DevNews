@@ -39,9 +39,9 @@ export default async function SavedPage() {
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-16 text-center">
-            <Bookmark className="size-10 text-muted-foreground/30" />
+            <Bookmark className="size-10 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">No saved items yet</p>
-            <p className="text-xs text-muted-foreground/70">
+            <p className="text-xs text-muted-foreground">
               Click the bookmark icon on any item to save it here
             </p>
           </div>
@@ -68,6 +68,7 @@ export default async function SavedPage() {
                     <Link
                       href={`/item/${item.id}`}
                       className="text-sm font-medium leading-snug hover:text-primary"
+                      aria-label={item.title}
                     >
                       {item.title}
                     </Link>
@@ -76,7 +77,7 @@ export default async function SavedPage() {
                         {item.summary}
                       </p>
                     )}
-                    <p className="mt-1.5 text-[11px] text-muted-foreground/70">
+                    <p className="mt-1.5 text-[11px] text-muted-foreground">
                       Saved{" "}
                       {formatDistanceToNow(new Date(item.actionDate), {
                         addSuffix: true,
@@ -88,6 +89,7 @@ export default async function SavedPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="shrink-0 rounded-md p-1.5 text-muted-foreground opacity-0 hover:bg-muted group-hover:opacity-100"
+                    aria-label={`Read: ${item.title}`}
                   >
                     <ExternalLink className="size-3.5" />
                   </a>

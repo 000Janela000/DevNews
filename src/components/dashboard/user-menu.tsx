@@ -26,14 +26,14 @@ export function UserMenu() {
       <Link
         href="/saved"
         className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        title="Saved"
+        aria-label="Saved articles"
       >
         <Bookmark className="size-3.5" />
       </Link>
       <Link
         href="/read-later"
         className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-        title="Read Later"
+        aria-label="Read later articles"
       >
         <Clock className="size-3.5" />
       </Link>

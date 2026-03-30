@@ -71,7 +71,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
         {/* Back */}
         <Link
           href="/dashboard"
-          className="mb-6 inline-flex items-center gap-1.5 text-xs text-muted-foreground/60 transition-colors hover:text-muted-foreground"
+          className="mb-6 inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-muted-foreground"
         >
           <ArrowLeft className="size-3" />
           Back
@@ -80,7 +80,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
         <article className="space-y-6">
           {/* Category + Title */}
           <div>
-            <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground/60">
+            <div className="mb-3 flex items-center gap-2 text-xs text-muted-foreground">
               <span
                 className={`inline-block size-1.5 rounded-full ${CATEGORY_COLORS[item.category as Category]}`}
               />
@@ -112,7 +112,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-muted-foreground/60 transition-colors hover:text-muted-foreground"
+                className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-muted-foreground"
               >
                 <ExternalLink className="size-3" />
                 Original
@@ -122,7 +122,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                   href={hnUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-orange-400/60 transition-colors hover:text-orange-400"
+                  className="text-orange-400 transition-colors hover:text-orange-300"
                 >
                   HN
                 </a>
@@ -132,7 +132,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                   href={pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-red-400/60 transition-colors hover:text-red-400"
+                  className="text-red-400 transition-colors hover:text-red-300"
                 >
                   PDF
                 </a>
@@ -154,7 +154,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                 {stripHtml(item.content, 10000)}
               </p>
               {isContentTruncated(item.content) && (
-                <p className="mt-3 text-[11px] text-muted-foreground/40 italic">
+                <p className="mt-3 text-[11px] text-muted-foreground italic">
                   Truncated — open original for full article.
                 </p>
               )}
@@ -167,7 +167,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
               {item.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full bg-muted/50 px-2 py-0.5 text-[10px] text-muted-foreground/60"
+                  className="rounded-full bg-muted/50 px-2 py-0.5 text-[10px] text-muted-foreground"
                 >
                   {tag}
                 </span>
@@ -178,7 +178,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
           {/* Cluster sources */}
           {clusterSources.length > 0 && (
             <div className="border-t border-border/30 pt-6">
-              <p className="mb-3 text-xs text-purple-400/70">
+              <p className="mb-3 text-xs text-purple-400">
                 Also covered by {clusterSources.length} other source
                 {clusterSources.length > 1 ? "s" : ""}
               </p>
@@ -193,7 +193,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                   >
                     <div>
                       <p className="text-sm">{s.title}</p>
-                      <p className="mt-0.5 text-[11px] text-muted-foreground/50">
+                      <p className="mt-0.5 text-[11px] text-muted-foreground">
                         {s.source.replace("rss:", "")} ·{" "}
                         {formatDistanceToNow(new Date(s.publishedAt), {
                           addSuffix: true,
@@ -210,16 +210,17 @@ export default async function ItemDetailPage({ params }: PageProps) {
           {/* Related */}
           {related.length > 0 && (
             <div className="border-t border-border/30 pt-6">
-              <p className="mb-3 text-xs text-muted-foreground/50">Related</p>
+              <p className="mb-3 text-xs text-muted-foreground">Related</p>
               <div className="space-y-2">
                 {related.map((r) => (
                   <Link
                     key={r.id}
                     href={`/item/${r.id}`}
                     className="block rounded-lg p-3 transition-colors hover:bg-muted/30"
+                    aria-label={r.title}
                   >
                     <p className="text-sm">{r.title}</p>
-                    <p className="mt-0.5 text-[11px] text-muted-foreground/50">
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">
                       {r.source.replace("rss:", "")} ·{" "}
                       {formatDistanceToNow(new Date(r.publishedAt), {
                         addSuffix: true,

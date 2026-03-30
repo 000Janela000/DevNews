@@ -72,6 +72,7 @@ export function TrackedItemCard({
       <Link
         href={`/item/${id}`}
         className="block rounded-lg border border-transparent p-4 transition-all hover:border-border/50 hover:bg-muted/30"
+        aria-label={title}
       >
         {/* Category indicator + title */}
         <div className="flex items-start gap-3">
@@ -83,9 +84,9 @@ export function TrackedItemCard({
             title={CATEGORY_LABELS[category]}
           />
           <div className="min-w-0 flex-1 pr-16">
-            <h3 className="text-[15px] font-medium leading-snug tracking-tight">
+            <h2 className="text-[15px] font-medium leading-snug tracking-tight">
               {title}
-            </h3>
+            </h2>
 
             {summary && (
               <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
@@ -94,7 +95,7 @@ export function TrackedItemCard({
             )}
 
             {/* Metadata line */}
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground/60">
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
               <span>{getSourceLabel(source)}</span>
               <span>·</span>
               <span>
@@ -136,6 +137,7 @@ export function TrackedItemCard({
           rel="noopener noreferrer"
           className="rounded p-1 text-muted-foreground/50 transition-colors hover:bg-muted hover:text-muted-foreground"
           onClick={(e) => e.stopPropagation()}
+          aria-label={`Read article: ${title}`}
         >
           <ExternalLink className="size-3.5" />
         </a>

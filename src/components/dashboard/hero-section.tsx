@@ -55,6 +55,7 @@ export function HeroSection({ items }: HeroSectionProps) {
         <Link
           href={`/item/${featured.id}`}
           className="group relative rounded-lg border border-border bg-card p-4 transition-colors hover:border-muted-foreground/50"
+          aria-label={featured.title}
         >
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <Badge className={`rounded-full border-0 px-2 py-0.5 text-[10px] ${CATEGORY_BADGE_COLORS[featured.category as Category]}`}>
@@ -77,7 +78,7 @@ export function HeroSection({ items }: HeroSectionProps) {
               {featured.summary}
             </p>
           )}
-          <p className="mt-3 text-[11px] text-muted-foreground/70">
+          <p className="mt-3 text-[11px] text-muted-foreground">
             {formatDistanceToNow(new Date(featured.publishedAt), { addSuffix: true })}
           </p>
           <ExternalLink className="absolute right-4 top-4 h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
@@ -90,6 +91,7 @@ export function HeroSection({ items }: HeroSectionProps) {
               key={item.id}
               href={`/item/${item.id}`}
               className="group relative flex items-start justify-between rounded-lg border border-border bg-card p-3 transition-colors hover:border-muted-foreground/50"
+              aria-label={item.title}
             >
               <div className="min-w-0 flex-1">
                 <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
@@ -105,7 +107,7 @@ export function HeroSection({ items }: HeroSectionProps) {
                 <h3 className="line-clamp-2 pr-6 text-[13px] font-medium leading-snug">
                   {item.title}
                 </h3>
-                <p className="mt-1 text-[11px] text-muted-foreground/70">
+                <p className="mt-1 text-[11px] text-muted-foreground">
                   {formatDistanceToNow(new Date(item.publishedAt), { addSuffix: true })}
                 </p>
               </div>

@@ -94,7 +94,7 @@ export function ItemActions({
               "rounded p-1 transition-colors hover:bg-muted",
               isActive ? activeClass : "text-muted-foreground/50"
             )}
-            title={isActive ? `Remove ${label}` : label}
+            aria-label={isActive ? `Remove ${label}` : label}
           >
             <Icon
               className="size-3.5"
