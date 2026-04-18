@@ -13,9 +13,12 @@ export interface GenerateResult {
 /**
  * Try Groq → Cerebras → Gemini → throw.
  *
- * Groq and Cerebras both run Llama 3.3 70B on purpose-built inference HW
- * with independent failure domains; either can carry the primary load.
- * Gemini is a last-resort fallback on a tight 250 RPD budget.
+ * Groq runs Llama 3.3 70B; Cerebras runs Qwen3 235B (MoE). Both are
+ * strong instruction-followers on independent inference hardware with
+ * independent failure domains. Gemini is a last-resort fallback on a
+ * tight 250 RPD budget. If either primary returns malformed JSON for
+ * an item, Zod validation in summarize.ts rejects and the chain
+ * continues.
  */
 export async function generateWithFallback(
   prompt: string,
