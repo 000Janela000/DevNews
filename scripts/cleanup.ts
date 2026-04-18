@@ -10,7 +10,8 @@
 
 import { pruneOldItems, closeDb } from "@/lib/db";
 
-const RETENTION_DAYS = Number(process.env.CLEANUP_RETENTION_DAYS ?? 14);
+const rawRetention = process.env.CLEANUP_RETENTION_DAYS?.trim();
+const RETENTION_DAYS = rawRetention ? Number(rawRetention) : 14;
 
 async function main() {
   if (!Number.isFinite(RETENTION_DAYS) || RETENTION_DAYS < 1) {
