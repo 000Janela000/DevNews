@@ -7,7 +7,7 @@
 
 import { nanoid } from "@/lib/id";
 import { fetchAllSources } from "@/lib/sources";
-import { deduplicateItems, upsertItems, logFetchRun, getLastFetchTime, updateSignificanceScores, pruneOldItems } from "@/lib/db";
+import { deduplicateItems, upsertItems, logFetchRun, getLastFetchTime, updateSignificanceScores, pruneOldItems, getRecentTitles } from "@/lib/db";
 import { calculateSignificanceScore } from "@/lib/scoring";
 import { promoteEligibleCandidates, restorePromotedCandidates } from "@/lib/discovery/candidates";
 
@@ -61,11 +61,19 @@ async function main() {
     process.exit(1);
   }
 
-  // Step 3: Deduplicate
+  // Step 3: Deduplicate (within batch + against last 72h of DB items)
   console.log(`\n[Pipeline] Deduplicating ${fetchResult.totalFetched} items...`);
-  const { unique, duplicatesRemoved } = deduplicateItems(fetchResult.items);
+  let recentTitles: Awaited<ReturnType<typeof getRecentTitles>> = [];
+  try {
+    recentTitles = await getRecentTitles(72);
+    console.log(`[Pipeline] Loaded ${recentTitles.length} recent DB titles for cross-cycle dedup`);
+  } catch {
+    console.warn("[Pipeline] Could not load recent titles — falling back to in-batch dedup only");
+  }
+  const { unique, duplicatesRemoved, crossCycleDuplicatesRemoved } =
+    deduplicateItems(fetchResult.items, recentTitles);
   console.log(
-    `[Pipeline] Dedup: ${duplicatesRemoved} duplicates removed, ${unique.length} unique items`
+    `[Pipeline] Dedup: ${duplicatesRemoved} in-batch + ${crossCycleDuplicatesRemoved} cross-cycle removed, ${unique.length} unique items`
   );
 
   // Step 4: Store in database
@@ -134,7 +142,7 @@ async function main() {
   console.log(`Duration: ${(durationMs / 1000).toFixed(1)}s`);
   console.log(`Sources: ${fetchResult.totalSources} total, ${fetchResult.failedSources} failed`);
   console.log(`Fetched: ${fetchResult.totalFetched} items`);
-  console.log(`Duplicates removed: ${duplicatesRemoved}`);
+  console.log(`Duplicates removed: ${duplicatesRemoved} in-batch, ${crossCycleDuplicatesRemoved} cross-cycle`);
   console.log(`Stored: ${itemsStored} items`);
   console.log(`========================================\n`);
 }

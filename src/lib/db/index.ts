@@ -4,7 +4,6 @@ export type { ItemRow, NewItemRow, FetchLogRow } from "./schema";
 export { normalizeItemUrl, isTitleDuplicate, deduplicateItems } from "./dedup";
 export { upsertItems, logFetchRun, getLastFetchTime, updateItemSummary, updateSignificanceScores, pruneOldItems } from "./mutations";
 export {
-  getItemsByCategory,
   getItemsByDateRange,
   getItemsBySource,
   searchItems,
@@ -12,4 +11,5 @@ export {
   getRecentItems,
   getItemById,
   getItemCounts,
+  getRecentTitles,
 } from "./queries";

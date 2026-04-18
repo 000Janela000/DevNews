@@ -18,7 +18,32 @@ NOT RELEVANT (score 0-1):
 - AI industry drama, funding rounds, acquisitions (unless it kills/changes a tool they use)
 - General tech news that happens to mention "AI"
 - Papers about model architecture internals (attention mechanisms, quantization theory)
-- AI applications in non-software domains (healthcare, finance, autonomous vehicles)`;
+- AI applications in non-software domains (healthcare, finance, autonomous vehicles)
+
+WRITING RULES for the summary field — this is strict:
+
+1. Sentence 1 MUST name the specific entity (company, model, product, version) AND state a concrete change. Version numbers, prices, dates, benchmarks, deprecations — real facts only.
+
+2. Sentence 2 is optional. Include it ONLY when there is a concrete so-what: a deadline, a migration requirement, a cost or performance delta that affects the reader. If there is no concrete so-what, STOP at sentence 1.
+
+3. NEVER use these phrases (banned — they produce fluff):
+   "valuable resource", "valuable insights", "useful for", "useful to have", "could be useful", "can be useful", "worth exploring", "practical guide", "no immediate action", "no action required", "for future projects", "good to know", "helpful resource", "handy tool", "great resource".
+
+4. NEVER describe the article meta-style. Do not write "this post covers X", "the guide explains X", "the author walks through X", "the article discusses X". Describe the CONTENT itself: "X released Y", "X raised prices by N%", "X deprecated Y in version Z".
+
+5. If the source has no concrete fact to report — just a vague guide, opinion piece, or generic overview — set isRelevant:false and leave summary as empty string. Do not manufacture a summary for weak content.
+
+GOOD examples (what to write):
+- "Anthropic released Claude 4.7 with a 1M-token context window and 40% lower input pricing. Upgrade if you hit context limits in agent workflows."
+- "OpenAI deprecated the completions endpoint, removal date 2026-06-01. Migrate to chat.completions."
+- "Vercel AI SDK v5 added streaming tool calls and drops Node 18 support."
+- "Cursor 0.45 added multi-file agent edits with per-file diff review."
+
+BAD examples (NEVER write like this):
+- "HuggingFace provides a guide on embedding models, which can be useful for AI development." — no concrete fact, banned phrase
+- "The guide is practical and focused on implementation. No immediate action required." — meta-description plus disclaimer
+- "A new AI tool has been released that could help developers." — no entity named, hedging
+- "This post is a valuable resource for understanding prompt engineering." — pure fluff, meta-description`;
 
 export function buildSummarizationPrompt(
   title: string,
@@ -36,11 +61,10 @@ Content: ${truncatedContent}
 
 Respond with valid JSON:
 {
-  "summary": "2-3 sentences. What changed? Does the reader need to act? Be concrete, no hedging.",
+  "summary": "1-2 sentences following the WRITING RULES in the system prompt. Empty string if the source has no concrete fact to report.",
   "category": "one of: models_releases, tools_frameworks, practices_approaches, industry_trends, research_papers",
   "relevance": <0-5 integer>,
   "tags": ["3-5 lowercase tags"],
-  "keyTakeaway": "One sentence: what changed and should I care?",
   "isRelevant": true or false
 }
 
@@ -52,5 +76,5 @@ RELEVANCE SCALE (this is the most important field):
   4 = Important. Affects tool selection, pricing, workflow. Should read today.
   5 = Critical. Breaking change, major model release, must-act-now.
 
-isRelevant: Set false if relevance is 0-1. Set true if relevance is 2+.`;
+isRelevant: Set false if relevance is 0-1, OR if the source has no concrete fact to report (summary would be vague/fluffy). Set true only when relevance is 2+ AND you can write a concrete sentence 1.`;
 }

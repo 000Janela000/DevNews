@@ -4,29 +4,49 @@ import { SYSTEM_PROMPT, buildSummarizationPrompt } from "./prompt";
 import { CategoryEnum } from "@/lib/types";
 
 const SummaryResponseSchema = z.object({
-  summary: z.string().min(10),
+  summary: z.string().default(""),
   category: CategoryEnum,
   relevance: z.number().int().min(0).max(5),
   tags: z.array(z.string()).default([]),
-  keyTakeaway: z.string().optional(),
   isRelevant: z.boolean().default(true),
 });
 
 export type SummaryResponse = z.infer<typeof SummaryResponseSchema>;
 
-/** Extract first 2 sentences as fallback summary */
-function fallbackSummary(content: string): string {
-  const clean = content.replace(/<[^>]*>/g, "").trim();
-  const sentences = clean.match(/[^.!?]+[.!?]+/g);
-  if (sentences && sentences.length >= 2) {
-    return sentences.slice(0, 2).join(" ").trim();
-  }
-  return clean.slice(0, 200).trim() + "...";
+// Phrases the LLM produces when it has nothing concrete to say.
+// A summary matching any of these is treated as low-signal and dropped.
+const FLUFF_PATTERNS: RegExp[] = [
+  /\bvaluable (resource|insights?)\b/i,
+  /\b(great|helpful|useful) resource\b/i,
+  /\bhandy (tool|resource|guide)\b/i,
+  /\b(can|could) be useful\b/i,
+  /\buseful (for|to have)\b/i,
+  /\bno (immediate )?action (is )?required\b/i,
+  /\bworth exploring\b/i,
+  /\bpractical guide\b/i,
+  /\bfor (your )?future (projects?|reference)\b/i,
+  /\bgood to know\b/i,
+];
+
+function isFluffy(summary: string): boolean {
+  if (!summary) return false;
+  return FLUFF_PATTERNS.some((p) => p.test(summary));
 }
 
 export interface SummarizeItemResult {
   response: SummaryResponse;
   provider: ProviderName;
+}
+
+/** Fallback response: empty summary + isRelevant:false so downstream marks it off-topic and briefing skips it. */
+function fallbackResponse(): SummaryResponse {
+  return {
+    summary: "",
+    category: "industry_trends",
+    relevance: 1,
+    tags: [],
+    isRelevant: false,
+  };
 }
 
 export async function summarizeItem(
@@ -40,10 +60,27 @@ export async function summarizeItem(
   try {
     const result = await generateWithFallback(prompt, SYSTEM_PROMPT);
 
-    // Parse and validate with Zod
     const parsed = SummaryResponseSchema.safeParse(JSON.parse(result.text));
     if (parsed.success) {
-      return { response: parsed.data, provider: result.provider };
+      const resp = parsed.data;
+
+      if (resp.isRelevant && isFluffy(resp.summary)) {
+        console.log(
+          `[Summarizer] Fluff filter dropped: "${title.slice(0, 60)}" :: ${resp.summary.slice(0, 80)}`
+        );
+        return {
+          response: {
+            summary: "",
+            category: resp.category,
+            relevance: 1,
+            tags: resp.tags,
+            isRelevant: false,
+          },
+          provider: result.provider,
+        };
+      }
+
+      return { response: resp, provider: result.provider };
     }
 
     console.warn(
@@ -55,18 +92,7 @@ export async function summarizeItem(
     console.error(`[Summarizer] All providers failed for "${title}": ${msg}`);
   }
 
-  // Fallback: generate basic summary without AI
-  return {
-    response: {
-      summary: fallbackSummary(content || title),
-      category: "industry_trends",
-      relevance: 1,
-      tags: [],
-      keyTakeaway: undefined,
-      isRelevant: false,
-    },
-    provider: "fallback",
-  };
+  return { response: fallbackResponse(), provider: "fallback" };
 }
 
 function delay(ms: number): Promise<void> {
@@ -119,7 +145,6 @@ export async function summarizeBatch(
       item.sourceType
     );
 
-    // Use the rate delay from whichever provider succeeded
     lastDelayMs = provider === "fallback" ? 0 : { groq: 4_000, gemini: 6_500 }[provider];
 
     const providerTag = provider === "fallback" ? " [local fallback]" : ` [${provider}]`;

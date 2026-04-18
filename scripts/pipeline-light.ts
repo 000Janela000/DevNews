@@ -11,7 +11,7 @@
 
 import { nanoid } from "@/lib/id";
 import { fetchLightSources } from "@/lib/sources";
-import { deduplicateItems, upsertItems, logFetchRun, getLastFetchTime, updateSignificanceScores } from "@/lib/db";
+import { deduplicateItems, upsertItems, logFetchRun, getLastFetchTime, updateSignificanceScores, getRecentTitles } from "@/lib/db";
 import { calculateSignificanceScore } from "@/lib/scoring";
 
 const DEFAULT_LOOKBACK_HOURS = 4; // Shorter lookback for frequent runs
@@ -42,9 +42,14 @@ async function main() {
     return;
   }
 
-  const { unique, duplicatesRemoved } = deduplicateItems(fetchResult.items);
+  let recentTitles: Awaited<ReturnType<typeof getRecentTitles>> = [];
+  try {
+    recentTitles = await getRecentTitles(72);
+  } catch { /* fall back to in-batch dedup only */ }
+  const { unique, duplicatesRemoved, crossCycleDuplicatesRemoved } =
+    deduplicateItems(fetchResult.items, recentTitles);
   console.log(
-    `[Light Pipeline] Dedup: ${duplicatesRemoved} removed, ${unique.length} unique`
+    `[Light Pipeline] Dedup: ${duplicatesRemoved} in-batch + ${crossCycleDuplicatesRemoved} cross-cycle removed, ${unique.length} unique`
   );
 
   try {

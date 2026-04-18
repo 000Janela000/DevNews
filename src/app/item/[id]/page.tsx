@@ -5,11 +5,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import { ItemActions } from "@/components/dashboard/item-actions";
 import { Header } from "@/components/dashboard/header";
 import { CATEGORY_LABELS, type Category } from "@/lib/types";
-import {
-  getItemById,
-  getItemsByCategory,
-  getItemsByDateRange,
-} from "@/lib/db/queries";
+import { getItemById, getItemsByDateRange } from "@/lib/db/queries";
 import { clusterItems } from "@/lib/clustering";
 import { stripHtml, isContentTruncated } from "@/lib/html";
 
@@ -31,14 +27,11 @@ export default async function ItemDetailPage({ params }: PageProps) {
   const { id } = await params;
 
   let item: Awaited<ReturnType<typeof getItemById>>;
-  let related: Awaited<ReturnType<typeof getItemsByCategory>> = [];
   let clusterSources: Awaited<ReturnType<typeof getItemById>>[] = [];
 
   try {
     item = await getItemById(id);
     if (!item) notFound();
-    related = await getItemsByCategory(item.category as Category, 5);
-    related = related.filter((r) => r.id !== item!.id).slice(0, 4);
 
     const dayBefore = new Date(
       new Date(item.publishedAt).getTime() - 24 * 60 * 60 * 1000
@@ -207,30 +200,6 @@ export default async function ItemDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          {/* Related */}
-          {related.length > 0 && (
-            <div className="border-t border-border/30 pt-6">
-              <p className="mb-3 text-xs text-muted-foreground">Related</p>
-              <div className="space-y-2">
-                {related.map((r) => (
-                  <Link
-                    key={r.id}
-                    href={`/item/${r.id}`}
-                    className="block rounded-lg p-3 transition-colors hover:bg-muted/30"
-                    aria-label={r.title}
-                  >
-                    <p className="text-sm">{r.title}</p>
-                    <p className="mt-0.5 text-[11px] text-muted-foreground">
-                      {r.source.replace("rss:", "")} ·{" "}
-                      {formatDistanceToNow(new Date(r.publishedAt), {
-                        addSuffix: true,
-                      })}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
         </article>
       </main>
     </div>

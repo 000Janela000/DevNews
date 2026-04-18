@@ -56,24 +56,44 @@ export function isTitleDuplicate(
   return jaccardSimilarity(tokenize(title1), tokenize(title2)) > threshold;
 }
 
-/** Deduplicate items by URL normalization and title similarity */
-export function deduplicateItems(items: NewTrackedItem[]): {
+export interface RecentTitle {
+  title: string;
+  urlNormalized: string;
+}
+
+/**
+ * Deduplicate items by URL normalization and title similarity.
+ *
+ * `recentTitles` is an optional list of items already in the DB from the
+ * last N hours. When provided, items whose title is ≥60% Jaccard-similar
+ * to any recent DB title (and whose URL doesn't match — URL-match is
+ * handled by upsertItems' onConflictDoUpdate) are dropped from the batch.
+ * This catches the same story re-surfacing in a later fetch cycle via a
+ * different source.
+ */
+export function deduplicateItems(
+  items: NewTrackedItem[],
+  recentTitles: RecentTitle[] = []
+): {
   unique: NewTrackedItem[];
   duplicatesRemoved: number;
+  crossCycleDuplicatesRemoved: number;
 } {
   const seen = new Map<string, NewTrackedItem>();
   const titles: Array<{ normalized: string; title: string }> = [];
+  const recentNormalizedUrls = new Set(
+    recentTitles.map((r) => r.urlNormalized)
+  );
   let duplicatesRemoved = 0;
+  let crossCycleDuplicatesRemoved = 0;
 
   for (const item of items) {
-    // Normalize URL
     const normalized = normalizeItemUrl(item.url);
     const itemWithNorm = { ...item, urlNormalized: normalized };
 
-    // Layer 1: URL dedup
+    // Layer 1: URL dedup within batch
     if (seen.has(normalized)) {
       duplicatesRemoved++;
-      // Keep the one with more content
       const existing = seen.get(normalized)!;
       if ((item.content?.length ?? 0) > (existing.content?.length ?? 0)) {
         seen.set(normalized, itemWithNorm);
@@ -81,13 +101,12 @@ export function deduplicateItems(items: NewTrackedItem[]): {
       continue;
     }
 
-    // Layer 2: Title similarity dedup
+    // Layer 2: Title similarity dedup within batch
     let isDup = false;
     for (const entry of titles) {
       if (isTitleDuplicate(item.title, entry.title)) {
         duplicatesRemoved++;
         isDup = true;
-        // Keep the one with more content
         const existing = seen.get(entry.normalized)!;
         if ((item.content?.length ?? 0) > (existing.content?.length ?? 0)) {
           seen.delete(entry.normalized);
@@ -98,15 +117,27 @@ export function deduplicateItems(items: NewTrackedItem[]): {
         break;
       }
     }
+    if (isDup) continue;
 
-    if (!isDup) {
-      seen.set(normalized, itemWithNorm);
-      titles.push({ normalized, title: item.title });
+    // Layer 3: Cross-cycle title similarity against recent DB items.
+    // Skip this check when URL matches — upsertItems handles that case.
+    if (!recentNormalizedUrls.has(normalized)) {
+      const matchesRecent = recentTitles.some((r) =>
+        isTitleDuplicate(item.title, r.title)
+      );
+      if (matchesRecent) {
+        crossCycleDuplicatesRemoved++;
+        continue;
+      }
     }
+
+    seen.set(normalized, itemWithNorm);
+    titles.push({ normalized, title: item.title });
   }
 
   return {
     unique: Array.from(seen.values()),
     duplicatesRemoved,
+    crossCycleDuplicatesRemoved,
   };
 }
