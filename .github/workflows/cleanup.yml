@@ -1,0 +1,34 @@
+name: Retention Cleanup
+
+on:
+  schedule:
+    # Daily at 02:07 UTC — off-peak, after the pipeline's :17 cadence
+    - cron: '7 2 * * *'
+  workflow_dispatch:
+    inputs:
+      retention_days:
+        description: 'Override retention window in days (default 14)'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Prune old items
+        run: npx tsx --tsconfig tsconfig.json scripts/cleanup.ts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CLEANUP_RETENTION_DAYS: ${{ github.event.inputs.retention_days }}
