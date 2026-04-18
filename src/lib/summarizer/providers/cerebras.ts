@@ -3,7 +3,10 @@ const CEREBRAS_ENDPOINT = "https://api.cerebras.ai/v1/chat/completions";
 // Qwen3 235B (MoE, 22B active) — the strongest instruction-follower available
 // on Cerebras's free tier for this account. Larger than Groq's Llama 3.3 70B.
 export const CEREBRAS_MODEL = "qwen-3-235b-a22b-instruct-2507";
-export const CEREBRAS_RATE_DELAY_MS = 2_500; // ~24 RPM, under the 30 RPM free-tier cap
+// Cerebras free tier: 30 RPM AND 60K TPM. Our calls are ~6K tokens each
+// (long system prompt + 4K content + JSON output), so the TPM cap bites
+// first: 60000 / 6000 ≈ 10 calls/min → 6500ms/call with headroom.
+export const CEREBRAS_RATE_DELAY_MS = 6_500;
 
 interface CerebrasChatResponse {
   choices?: Array<{ message?: { content?: string } }>;
