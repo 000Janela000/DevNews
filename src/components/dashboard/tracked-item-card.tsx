@@ -8,10 +8,6 @@ import type { Category } from "@/lib/types";
 import { ItemActions } from "./item-actions";
 import type { UserAction } from "@/lib/db/user-state";
 
-/**
- * Category dot colors — small inline indicator in the meta row. Tuned
- * to sit next to warm-paper background without clashing.
- */
 const CATEGORY_COLOR: Record<Category, string> = {
   models_releases: "bg-[var(--cat-models)]",
   tools_frameworks: "bg-[var(--cat-tools)]",
@@ -68,23 +64,45 @@ export function TrackedItemCard({
   url,
   publishedAt,
   importance,
-  readingTimeMin,
   clusterSize,
   userStates,
 }: TrackedItemCardProps) {
+  const isHighImpact = importance != null && importance >= 4;
+
   return (
-    <article className="group relative py-6 first:pt-0 last:pb-0">
+    <article className="group relative py-4 first:pt-0 last:pb-0">
       <Link
         href={`/item/${id}`}
-        className="block rounded-sm transition-colors"
         aria-label={title}
+        className="block rounded-sm"
       >
-        {/* Meta row — small-caps, mono, breadcrumb-style */}
-        <div className="smallcaps flex flex-wrap items-center gap-x-2.5 gap-y-1 text-muted-foreground">
+        {/* Title first — the thing you're reading for */}
+        <div className="flex items-start gap-2.5">
           <span
             aria-hidden
-            className={cn("inline-block size-[7px] rounded-full", CATEGORY_COLOR[category])}
+            title={category}
+            className={cn(
+              "mt-[9px] inline-block size-[6px] shrink-0 rounded-full",
+              CATEGORY_COLOR[category]
+            )}
           />
+          <h2 className="flex-1 text-[17px] font-semibold leading-[1.35] tracking-[-0.005em] text-foreground">
+            {title}
+            {isHighImpact ? (
+              <span className="ml-2 inline-block align-middle text-[11px] font-medium text-accent">
+                ★
+              </span>
+            ) : null}
+          </h2>
+        </div>
+
+        {summary ? (
+          <p className="mt-1.5 line-clamp-2 pl-[14px] text-[14px] leading-[1.55] text-foreground/75">
+            {summary}
+          </p>
+        ) : null}
+
+        <div className="meta mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 pl-[14px]">
           <span>{getSourceLabel(source)}</span>
           <span aria-hidden>·</span>
           <time
@@ -93,52 +111,33 @@ export function TrackedItemCard({
           >
             {formatDistanceToNow(new Date(publishedAt), { addSuffix: true })}
           </time>
-          {readingTimeMin ? (
-            <>
-              <span aria-hidden>·</span>
-              <span className="font-mono tabular">{readingTimeMin}m read</span>
-            </>
-          ) : null}
           {clusterSize && clusterSize > 1 ? (
             <>
               <span aria-hidden>·</span>
               <span>{clusterSize} sources</span>
             </>
           ) : null}
-          {importance && importance >= 4 ? (
-            <>
-              <span aria-hidden>·</span>
-              <span className="text-accent">high impact</span>
-            </>
-          ) : null}
         </div>
-
-        {/* Title — serif display, balanced, slightly tight */}
-        <h2 className="mt-2 font-serif text-[21px] font-medium leading-[1.2] tracking-tight text-foreground">
-          {title}
-        </h2>
-
-        {/* Summary — editorial italic lead-in style */}
-        {summary ? (
-          <p className="prose-body mt-2 text-[15px] text-muted-foreground">
-            {summary}
-          </p>
-        ) : null}
       </Link>
 
-      {/* Action bar — always visible, no hover-hide so touch works */}
-      <div className="mt-3 flex items-center justify-between gap-3">
+      {/* Actions — reveal on hover/focus, but always visible on touch */}
+      <div
+        className={cn(
+          "absolute right-0 top-4 flex items-center gap-1 rounded-sm",
+          "opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100",
+          "[@media(hover:none)]:opacity-100"
+        )}
+      >
         <ItemActions itemId={id} initialStates={userStates} compact />
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="smallcaps inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex size-7 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:text-foreground"
           aria-label={`Open original: ${title}`}
         >
-          Original
-          <ExternalLink className="size-3" strokeWidth={1.5} />
+          <ExternalLink className="size-3.5" strokeWidth={1.5} />
         </a>
       </div>
     </article>

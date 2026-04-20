@@ -154,10 +154,16 @@ export function KeyboardProvider() {
         open={shortcutsOpen}
         onClose={() => setShortcutsOpen(false)}
       />
-      {/* G-chord indicator (Linear-style hint) */}
+      {/* G-chord indicator — floating hint */}
       {awaitingG ? (
-        <div className="smallcaps pointer-events-none fixed bottom-6 left-1/2 z-[90] -translate-x-1/2 rounded-sm border border-border bg-background px-3 py-1.5 shadow-lg">
-          Press D · W · S · L
+        <div className="pointer-events-none fixed bottom-6 left-1/2 z-[90] -translate-x-1/2 rounded-sm border border-border bg-background px-3 py-1.5 text-[12px] text-muted-foreground shadow-lg">
+          press <kbd className="font-mono">d</kbd>
+          {" · "}
+          <kbd className="font-mono">w</kbd>
+          {" · "}
+          <kbd className="font-mono">s</kbd>
+          {" · "}
+          <kbd className="font-mono">l</kbd>
         </div>
       ) : null}
     </>

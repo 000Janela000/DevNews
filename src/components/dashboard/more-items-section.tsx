@@ -20,14 +20,14 @@ export function MoreItemsSection({ items }: MoreItemsSectionProps) {
   if (items.length === 0) return null;
 
   return (
-    <section className="mx-auto mt-16 max-w-3xl px-4">
+    <section className="mx-auto mt-10 max-w-3xl px-4">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="smallcaps flex w-full items-center justify-between border-t border-border py-4 text-muted-foreground transition-colors hover:text-foreground"
+        className="meta flex w-full items-center justify-between border-t border-border py-3 hover:text-foreground"
         aria-expanded={expanded}
       >
         <span>
-          Also today · {items.length} more item{items.length !== 1 ? "s" : ""}
+          {items.length} more item{items.length === 1 ? "" : "s"}
         </span>
         {expanded ? (
           <ChevronUp className="size-4" strokeWidth={1.5} />

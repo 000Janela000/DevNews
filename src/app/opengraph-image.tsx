@@ -22,90 +22,75 @@ export default function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          backgroundColor: "#faf8f4",
+          backgroundColor: "#f7f5ef",
           padding: "80px 96px",
-          color: "#2a2622",
+          color: "#3a3430",
         }}
       >
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
-            fontSize: 20,
-            letterSpacing: 4,
-            textTransform: "uppercase",
-            color: "#6b5f54",
-            fontFamily: "monospace",
+            fontSize: 16,
+            color: "#7a6e62",
+            fontFamily: "sans-serif",
           }}
         >
           <span>{dateLabel}</span>
-          <span>
-            Issue №{Math.floor(
-              (now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) /
-                (1000 * 60 * 60 * 24)
-            )}
-          </span>
+          <span>DevNews</span>
         </div>
 
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: 28,
+            gap: 20,
           }}
         >
           <div
             style={{
-              fontSize: 180,
+              fontSize: 92,
               lineHeight: 1,
-              fontWeight: 500,
-              letterSpacing: -6,
-              fontFamily: "serif",
+              fontWeight: 600,
+              letterSpacing: -3,
+              fontFamily: "sans-serif",
             }}
           >
-            DevNews
+            The AI developer&apos;s briefing.
           </div>
           <div
             style={{
-              fontSize: 32,
-              lineHeight: 1.4,
-              fontStyle: "italic",
-              color: "#6b5f54",
-              fontFamily: "serif",
+              fontSize: 24,
+              lineHeight: 1.45,
+              color: "#7a6e62",
+              fontFamily: "sans-serif",
               maxWidth: 800,
             }}
           >
-            A daily briefing of AI developments for people who build software.
+            A daily summary of what shipped, what changed, and why you care.
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
-          {/* Double-rule rendered as two stacked thin lines — satori
-              doesn't support `border: double`, but two solid borders
-              with a 3px gap is visually identical. */}
-          <div style={{ height: 1, backgroundColor: "#2a2622" }} />
-          <div style={{ height: 3 }} />
-          <div style={{ height: 1, backgroundColor: "#2a2622" }} />
+          <div style={{ height: 1, backgroundColor: "#3a3430" }} />
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              paddingTop: 20,
-              fontSize: 18,
-              letterSpacing: 4,
-              textTransform: "uppercase",
-              color: "#6b5f54",
-              fontFamily: "monospace",
+              paddingTop: 16,
+              fontSize: 14,
+              color: "#7a6e62",
+              fontFamily: "sans-serif",
             }}
           >
-            <span>Summaries first · drill-down on demand</span>
+            <span>Summaries first. Drill-down on demand.</span>
             <div
               style={{
-                width: 10,
-                height: 10,
+                width: 8,
+                height: 8,
                 borderRadius: "50%",
-                backgroundColor: "#b74a28",
+                backgroundColor: "#4a6da0",
               }}
             />
           </div>

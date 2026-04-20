@@ -4,15 +4,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Browser-native page transitions. Chrome/Safari/Edge — Firefox
- * falls back to no animation which is graceful. */
+/* Browser-native page transitions — 180ms fade, calm enough to be ignored */
 @view-transition {
   navigation: auto;
 }
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 180ms;
+  animation-duration: 140ms;
   animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 
@@ -21,7 +20,7 @@
 }
 
 ::view-transition-new(root) {
-  animation-name: vt-fade-slide-in;
+  animation-name: vt-fade-in;
 }
 
 @keyframes vt-fade-out {
@@ -30,28 +29,26 @@
   }
 }
 
-@keyframes vt-fade-slide-in {
+@keyframes vt-fade-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
   }
 }
 
 /* =============================================================
- * Design tokens — "Editorial-Minimal"
- * Typography: Fraunces (serif, variable opsz) + Geist Mono (meta).
- * Palette: warm paper (default) + graphite (dark). Single terracotta
- * accent. Never pure black or white (causes halation).
- * Scale: 1.25 modular (major third), 4px baseline.
+ * Design tokens — "Calm"
+ * One sans family (Inter), muted warm palette, dusty-blue accent,
+ * minimal contrast for ease, no decorative utilities.
  * ========================================================== */
 
 @theme inline {
-  /* Fonts */
-  --font-sans: var(--font-fraunces), ui-serif, Georgia, Cambria, "Times New Roman", serif;
-  --font-serif: var(--font-fraunces), ui-serif, Georgia, Cambria, "Times New Roman", serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  /* Fonts — Inter for everything readable, Geist Mono for meta/code */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", Menlo,
+    monospace;
 
-  /* Semantic color tokens — bound to theme CSS vars below */
+  /* Semantic color tokens bound to theme CSS vars */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
@@ -73,84 +70,83 @@
   --color-input: var(--border);
   --color-destructive: var(--destructive);
 
-  /* Radius — Linear-tight, not the shadcn 10px default */
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 6px;
+  /* Radii — Linear-tight */
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 7px;
   --radius-xl: 10px;
 
-  /* Easing — Linear's motion curve, a touch snappier than browser default */
+  /* Modular scale 1.2 — gentler than 1.25, less shouty */
+  --text-2xs: 11px;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 15px;
+  --text-md: 17px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 28px;
+  --text-3xl: 34px;
+
+  /* Easing */
   --ease-out-linear: cubic-bezier(0.2, 0, 0, 1);
   --ease-inout-snappy: cubic-bezier(0.25, 0.1, 0.25, 1);
-
-  /* Modular scale 1.25 anchored at 17px body */
-  --text-2xs: 11px;
-  --text-xs: 13px;
-  --text-sm: 15px;
-  --text-base: 17px;
-  --text-lg: 21px;
-  --text-xl: 26px;
-  --text-2xl: 33px;
-  --text-3xl: 42px;
-  --text-4xl: 52px;
-  --text-5xl: 65px;
 }
 
 /* =============================================================
- * Theme palettes
+ * Theme palettes — soft cream default, soft graphite dark
  * ========================================================== */
 
 :root {
-  /* Warm-paper light (default) */
-  --background: oklch(0.985 0.005 85);
-  --surface: oklch(0.97 0.006 85);
-  --foreground: oklch(0.22 0.012 60);
-  --muted: oklch(0.95 0.006 85);
-  --muted-foreground: oklch(0.48 0.012 60);
-  --border: oklch(0.9 0.006 85);
-  --border-strong: oklch(0.82 0.008 60);
-  --accent: oklch(0.55 0.15 35);
-  --accent-foreground: oklch(0.985 0.005 85);
-  --primary: oklch(0.22 0.012 60);
-  --primary-foreground: oklch(0.985 0.005 85);
-  --destructive: oklch(0.55 0.22 25);
+  /* Soft warm paper */
+  --background: oklch(0.97 0.004 85);
+  --surface: oklch(0.955 0.005 85);
+  --foreground: oklch(0.28 0.008 60);
+  --muted: oklch(0.945 0.005 85);
+  --muted-foreground: oklch(0.5 0.01 60);
+  --border: oklch(0.91 0.005 85);
+  --border-strong: oklch(0.82 0.007 60);
+  --accent: oklch(0.55 0.07 240);          /* dusty blue — calm */
+  --accent-foreground: oklch(0.97 0.004 85);
+  --primary: oklch(0.28 0.008 60);
+  --primary-foreground: oklch(0.97 0.004 85);
+  --destructive: oklch(0.52 0.18 25);
 
-  /* Category hues — tuned to warm paper, not pure */
-  --cat-models: oklch(0.6 0.14 240);     /* deep blue */
-  --cat-tools: oklch(0.62 0.13 150);     /* emerald */
-  --cat-practices: oklch(0.68 0.14 70);  /* amber */
-  --cat-industry: oklch(0.58 0.15 320);  /* plum */
-  --cat-research: oklch(0.6 0.16 15);    /* rose */
+  /* Category hues — all muted, same lightness */
+  --cat-models: oklch(0.58 0.08 240);
+  --cat-tools: oklch(0.6 0.08 160);
+  --cat-practices: oklch(0.62 0.09 80);
+  --cat-industry: oklch(0.58 0.08 320);
+  --cat-research: oklch(0.58 0.09 20);
 
   color-scheme: light;
 }
 
 .dark {
-  /* Graphite dark — cool-neutral, never pure black */
-  --background: oklch(0.18 0.005 255);
-  --surface: oklch(0.22 0.006 255);
-  --foreground: oklch(0.92 0.003 255);
-  --muted: oklch(0.25 0.007 255);
-  --muted-foreground: oklch(0.65 0.008 255);
-  --border: oklch(0.28 0.008 255);
-  --border-strong: oklch(0.38 0.01 255);
-  --accent: oklch(0.78 0.13 75);    /* amber replaces terracotta in dark */
-  --accent-foreground: oklch(0.18 0.005 255);
-  --primary: oklch(0.92 0.003 255);
-  --primary-foreground: oklch(0.18 0.005 255);
-  --destructive: oklch(0.68 0.2 25);
+  /* Soft graphite — lifted off pure black */
+  --background: oklch(0.23 0.006 245);
+  --surface: oklch(0.26 0.008 245);
+  --foreground: oklch(0.9 0.004 245);
+  --muted: oklch(0.29 0.008 245);
+  --muted-foreground: oklch(0.62 0.008 245);
+  --border: oklch(0.32 0.008 245);
+  --border-strong: oklch(0.42 0.01 245);
+  --accent: oklch(0.7 0.08 240);
+  --accent-foreground: oklch(0.23 0.006 245);
+  --primary: oklch(0.9 0.004 245);
+  --primary-foreground: oklch(0.23 0.006 245);
+  --destructive: oklch(0.64 0.18 25);
 
-  --cat-models: oklch(0.72 0.12 240);
-  --cat-tools: oklch(0.74 0.13 150);
-  --cat-practices: oklch(0.8 0.13 70);
-  --cat-industry: oklch(0.72 0.13 320);
-  --cat-research: oklch(0.72 0.15 15);
+  --cat-models: oklch(0.72 0.08 240);
+  --cat-tools: oklch(0.74 0.08 160);
+  --cat-practices: oklch(0.76 0.08 80);
+  --cat-industry: oklch(0.72 0.08 320);
+  --cat-research: oklch(0.72 0.09 20);
 
   color-scheme: dark;
 }
 
 /* =============================================================
- * Base layer
+ * Base layer — keep it quiet
  * ========================================================== */
 
 @layer base {
@@ -161,31 +157,22 @@
   html {
     font-family: var(--font-sans);
     font-optical-sizing: auto;
-    font-variant-ligatures: contextual;
+    font-feature-settings: "cv11", "ss01", "ss03";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
-    /* Hanging punctuation — editorial detail most sites skip */
-    hanging-punctuation: first last;
-    /* Enable variable font opsz axis */
-    font-variation-settings: "opsz" 12;
   }
 
   body {
     background: var(--background);
     color: var(--foreground);
     font-size: var(--text-base);
-    line-height: 1.5;
-    font-feature-settings:
-      "kern",
-      "liga",
-      "calt",
-      "ss01";
+    line-height: 1.55;
   }
 
-  /* Tabular numerals everywhere dates/counts appear — prevents jitter */
+  /* Tabular numerals on times and counts */
   time,
   [data-mono],
   .font-mono,
@@ -193,13 +180,12 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Balance headlines; pretty body — fixes widows/orphans */
+  /* Balance headings, pretty body */
   h1,
   h2,
   h3,
   h4 {
     text-wrap: balance;
-    font-variation-settings: "opsz" 144;
     letter-spacing: -0.01em;
   }
 
@@ -207,31 +193,26 @@
     text-wrap: pretty;
   }
 
-  /* Editorial link underline — offset + thin */
+  /* Links — quiet underline, no shout */
   a {
     text-underline-offset: 3px;
     text-decoration-thickness: 1px;
   }
 
-  /* Warm selection in light, amber in dark */
+  /* Selection — muted accent */
   ::selection {
-    background: oklch(0.88 0.12 75);
-    color: oklch(0.22 0.012 60);
+    background: color-mix(in oklch, var(--accent) 30%, var(--background));
+    color: var(--foreground);
   }
 
-  .dark ::selection {
-    background: oklch(0.55 0.15 75);
-    color: oklch(0.18 0.005 255);
-  }
-
-  /* Accent focus ring instead of browser default */
+  /* Focus ring uses accent, 2px offset */
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: 3px;
   }
 
-  /* Scrollbar — minimal, honors theme */
+  /* Scrollbar minimal */
   ::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -248,7 +229,7 @@
     background: var(--border-strong);
   }
 
-  /* Respect reduced motion */
+  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -260,69 +241,53 @@
     }
   }
 
-  /* Prevent stuck-hover on touch devices — many shadcn starters miss this */
+  /* Prevent stuck-hover on touch */
   @media (hover: none) {
-    .hover\:bg-muted\/30:hover,
+    .hover\:bg-muted:hover,
     .hover\:bg-muted\/50:hover,
-    .hover\:border-border\/50:hover {
-      background-color: transparent;
-      border-color: transparent;
+    .hover\:border-border\/80:hover,
+    .hover\:text-foreground:hover {
+      background-color: inherit;
+      border-color: inherit;
+      color: inherit;
     }
   }
 }
 
 /* =============================================================
- * Utilities
+ * Utilities — tiny, functional
  * ========================================================== */
 
 @layer utilities {
-  /* Small-caps for source labels — ANTHROPIC, HACKERNEWS */
-  .smallcaps {
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: var(--text-2xs);
-    font-weight: 500;
-    font-variation-settings: "opsz" 11;
-  }
-
-  /* Display typography for mastheads and big headlines */
-  .display {
-    font-variation-settings: "opsz" 144;
-    letter-spacing: -0.025em;
-    line-height: 1.05;
-  }
-
-  /* Body reading text — opsz tuned for 17-18px */
+  /* Narrow reading column for long-form */
   .prose-body {
-    font-variation-settings: "opsz" 12;
-    line-height: 1.55;
-    max-width: 66ch;
+    max-width: 64ch;
+    line-height: 1.7;
   }
 
-  /* Masthead rule — the thin horizontal line under editions */
-  .masthead-rule {
-    border-top: 1px solid var(--foreground);
-    border-bottom: 3px double var(--foreground);
+  /* Meta row — lowercase sans, muted, compact */
+  .meta {
+    font-size: var(--text-xs);
+    color: var(--muted-foreground);
+    letter-spacing: 0;
   }
 
-  /* Scroll-driven header — starts transparent, becomes opaque + ruled
-   * as user scrolls past the masthead. Progressive enhancement: browsers
-   * without `animation-timeline` keep the always-opaque fallback. */
+  /* Scroll-driven header — starts clear, becomes opaque */
   @supports (animation-timeline: scroll()) {
     .scroll-header {
       background: transparent;
       border-bottom-color: transparent;
       animation: header-scroll linear both;
       animation-timeline: scroll(root);
-      animation-range: 40px 220px;
+      animation-range: 20px 160px;
     }
   }
 
   @keyframes header-scroll {
     to {
-      background: color-mix(in oklch, var(--background) 85%, transparent);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: color-mix(in oklch, var(--background) 88%, transparent);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border-bottom-color: var(--border);
     }
   }

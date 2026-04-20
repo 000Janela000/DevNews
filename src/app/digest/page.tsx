@@ -2,7 +2,6 @@ import Link from "next/link";
 import { formatDistanceToNow, format, startOfWeek, endOfWeek } from "date-fns";
 import { ExternalLink } from "lucide-react";
 import { Header } from "@/components/dashboard/header";
-import { Masthead } from "@/components/masthead";
 import { CATEGORY_LABELS, type Category } from "@/lib/types";
 import {
   getWeeklyTopItems,
@@ -13,7 +12,7 @@ import type { ItemRow } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Weekly digest",
+  title: "Week",
   description: "The week in AI for people who build software.",
 };
 
@@ -65,10 +64,8 @@ export default async function DigestPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <Masthead section="digest" />
-
-      <main className="mx-auto max-w-3xl px-4 pb-32">
-        <div className="smallcaps mb-1 flex items-baseline justify-between text-muted-foreground">
+      <main className="mx-auto max-w-3xl px-4 pt-4 pb-24">
+        <div className="meta flex items-center justify-between pb-2">
           <span>
             Week of{" "}
             <span className="font-mono tabular">
@@ -78,73 +75,61 @@ export default async function DigestPage() {
           <span className="font-mono tabular">{totalItems} tracked</span>
         </div>
 
-        <h2 className="font-serif text-2xl font-medium tracking-tight text-foreground">
-          What shipped across the week, by category.
-        </h2>
-
-        <div className="mt-2 h-px w-full bg-border" />
-
         {dbError ? (
-          <div className="mt-6 rounded-sm border border-destructive/30 bg-destructive/5 p-4 font-serif italic text-destructive">
+          <div className="mt-6 rounded-sm border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
             Database not connected.
           </div>
         ) : null}
 
-        {/* Category counts as editorial summary row */}
-        {counts.length > 0 ? (
-          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-5">
-            {CATEGORY_ORDER.map((cat) => {
-              const count = counts.find((c) => c.category === cat)?.count ?? 0;
-              return (
-                <div key={cat} className="flex flex-col">
-                  <span className="font-mono text-2xl font-medium tabular text-foreground">
-                    {count}
-                  </span>
-                  <span className="smallcaps mt-0.5 text-muted-foreground">
-                    <span
-                      aria-hidden
-                      className={`mr-1.5 inline-block size-[7px] translate-y-[-1px] rounded-full ${CATEGORY_COLOR[cat]}`}
-                    />
-                    {CATEGORY_LABELS[cat]}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        ) : null}
-
         {items.length === 0 ? (
-          <div className="py-24 text-center font-serif italic text-muted-foreground">
-            No items this week yet — check back later.
+          <div className="py-16 text-center text-sm text-muted-foreground">
+            No items this week yet.
           </div>
         ) : (
-          <div className="mt-12 space-y-16">
+          <div className="space-y-10">
             {CATEGORY_ORDER.map((cat) => {
               const catItems = grouped[cat];
               if (!catItems || catItems.length === 0) return null;
 
               return (
                 <section key={cat}>
-                  <div className="smallcaps flex items-baseline gap-3 text-accent">
+                  <div className="meta flex items-baseline gap-2 border-b border-border pb-2">
                     <span
                       aria-hidden
-                      className={`inline-block size-[7px] translate-y-[-1px] rounded-full ${CATEGORY_COLOR[cat]}`}
+                      className={`inline-block size-[6px] rounded-full ${CATEGORY_COLOR[cat]}`}
                     />
-                    <span>{CATEGORY_LABELS[cat]}</span>
-                    <span className="ml-auto font-mono text-muted-foreground tabular">
+                    <span className="text-foreground">
+                      {CATEGORY_LABELS[cat]}
+                    </span>
+                    <span className="ml-auto font-mono tabular">
                       {catItems.length}
                     </span>
                   </div>
-                  <div className="mt-1 h-px w-full bg-border" />
 
                   <ul className="divide-y divide-border">
                     {catItems.map((item) => (
-                      <li
-                        key={item.id}
-                        className="py-5 first:pt-5 last:pb-0"
-                      >
-                        <Link href={`/item/${item.id}`} className="block">
-                          <div className="smallcaps flex flex-wrap items-center gap-x-2.5 gap-y-1 text-muted-foreground">
+                      <li key={item.id} className="py-3 first:pt-3 last:pb-0">
+                        <Link
+                          href={`/item/${item.id}`}
+                          className="block"
+                          aria-label={item.title}
+                        >
+                          <h3 className="text-[16px] font-semibold leading-[1.35] text-foreground">
+                            {item.title}
+                            {item.importance && item.importance >= 4 ? (
+                              <span className="ml-2 text-[11px] text-accent">
+                                ★
+                              </span>
+                            ) : null}
+                          </h3>
+
+                          {item.summary ? (
+                            <p className="mt-1 line-clamp-2 text-[13.5px] leading-[1.5] text-foreground/75">
+                              {item.summary}
+                            </p>
+                          ) : null}
+
+                          <div className="meta mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
                             <span>
                               {item.source
                                 .replace("rss:", "")
@@ -160,40 +145,21 @@ export default async function DigestPage() {
                                 { addSuffix: true }
                               )}
                             </time>
-                            {item.importance && item.importance >= 4 ? (
-                              <>
-                                <span aria-hidden>·</span>
-                                <span className="text-accent">
-                                  high impact
-                                </span>
-                              </>
-                            ) : null}
+                            <a
+                              href={item.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="ml-auto inline-flex items-center gap-1 hover:text-foreground"
+                            >
+                              original
+                              <ExternalLink
+                                className="size-3"
+                                strokeWidth={1.5}
+                              />
+                            </a>
                           </div>
-
-                          <h3 className="mt-1 font-serif text-lg font-medium leading-snug tracking-tight text-foreground">
-                            {item.title}
-                          </h3>
-
-                          {item.summary ? (
-                            <p className="prose-body mt-1 text-[15px] text-muted-foreground">
-                              {item.summary}
-                            </p>
-                          ) : null}
                         </Link>
-                        <div className="mt-2 flex justify-end">
-                          <a
-                            href={item.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="smallcaps inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
-                          >
-                            Original
-                            <ExternalLink
-                              className="size-3"
-                              strokeWidth={1.5}
-                            />
-                          </a>
-                        </div>
                       </li>
                     ))}
                   </ul>

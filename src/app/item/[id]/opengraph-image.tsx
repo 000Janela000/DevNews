@@ -32,56 +32,63 @@ export default async function OpenGraphImage({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          backgroundColor: "#faf8f4",
+          backgroundColor: "#f7f5ef",
           padding: "72px 88px",
-          color: "#2a2622",
+          color: "#3a3430",
         }}
       >
-        {/* Top meta strip */}
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            fontSize: 18,
-            letterSpacing: 4,
-            textTransform: "uppercase",
-            color: "#6b5f54",
-            fontFamily: "monospace",
+            fontSize: 15,
+            color: "#7a6e62",
+            fontFamily: "sans-serif",
           }}
         >
-          <span>DevNews · {category}</span>
-          <span>{source}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div
+              style={{
+                width: 7,
+                height: 7,
+                borderRadius: "50%",
+                backgroundColor: "#4a6da0",
+              }}
+            />
+            <span>{category}</span>
+            <span>·</span>
+            <span>{source}</span>
+          </div>
+          <span>DevNews</span>
         </div>
 
-        {/* Title — the editorial centerpiece */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             gap: 24,
-            maxWidth: 960,
+            maxWidth: 980,
           }}
         >
           <div
             style={{
-              fontSize: 62,
-              lineHeight: 1.1,
-              fontWeight: 500,
-              letterSpacing: -1.5,
-              fontFamily: "serif",
+              fontSize: 56,
+              lineHeight: 1.15,
+              fontWeight: 600,
+              letterSpacing: -1.2,
+              fontFamily: "sans-serif",
             }}
           >
-            {title.length > 140 ? title.slice(0, 137) + "…" : title}
+            {title.length > 150 ? title.slice(0, 147) + "…" : title}
           </div>
           {summary && !summary.startsWith("[Off-topic]") ? (
             <div
               style={{
-                fontSize: 26,
-                lineHeight: 1.45,
-                fontStyle: "italic",
-                color: "#6b5f54",
-                fontFamily: "serif",
+                fontSize: 24,
+                lineHeight: 1.5,
+                color: "#7a6e62",
+                fontFamily: "sans-serif",
               }}
             >
               {summary.length > 220 ? summary.slice(0, 217) + "…" : summary}
@@ -89,35 +96,18 @@ export default async function OpenGraphImage({
           ) : null}
         </div>
 
-        {/* Bottom wordmark + accent rule */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            borderTop: "2px solid #2a2622",
-            paddingTop: 20,
-          }}
-        >
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ height: 1, backgroundColor: "#3a3430" }} />
           <div
             style={{
-              fontFamily: "serif",
-              fontSize: 42,
-              fontWeight: 500,
-              letterSpacing: -1,
+              paddingTop: 14,
+              fontSize: 14,
+              color: "#7a6e62",
+              fontFamily: "sans-serif",
             }}
           >
-            DevNews
+            dev-news.vercel.app
           </div>
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              backgroundColor: "#b74a28",
-              marginBottom: 16,
-            }}
-          />
         </div>
       </div>
     ),

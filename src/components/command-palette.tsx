@@ -31,7 +31,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const [loading, setLoading] = useState(false);
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Debounced server-side search as user types
   useEffect(() => {
     if (!open) return;
     if (query.trim().length < 2) {
@@ -61,7 +60,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     };
   }, [query, open]);
 
-  // Reset on close
   useEffect(() => {
     if (!open) {
       setQuery("");
@@ -89,7 +87,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         if (e.target === e.currentTarget) onOpenChange(false);
       }}
     >
-      <div className="w-full max-w-xl overflow-hidden rounded-lg border border-border bg-background shadow-2xl">
+      <div className="w-full max-w-xl overflow-hidden rounded-md border border-border bg-background shadow-xl">
         <div className="flex items-center gap-3 border-b border-border px-4">
           <Search
             className="size-4 shrink-0 text-muted-foreground"
@@ -99,44 +97,44 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             autoFocus
             value={query}
             onValueChange={setQuery}
-            placeholder="Search articles, jump to sections, toggle settings…"
-            className="h-12 w-full bg-transparent font-serif text-[15px] text-foreground placeholder:text-muted-foreground/70 focus:outline-none"
+            placeholder="Search articles or jump to a section"
+            className="h-11 w-full bg-transparent text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
-          <kbd className="smallcaps hidden rounded-sm border border-border px-1.5 py-0.5 text-muted-foreground sm:inline-block">
+          <kbd className="hidden rounded-sm border border-border px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground sm:inline-block">
             esc
           </kbd>
         </div>
 
-        <Command.List className="max-h-[60vh] overflow-y-auto p-2">
-          <Command.Empty className="py-10 text-center font-serif italic text-muted-foreground">
+        <Command.List className="max-h-[56vh] overflow-y-auto p-1.5">
+          <Command.Empty className="py-8 text-center text-[13px] text-muted-foreground">
             {loading
               ? "Searching…"
               : query.length >= 2
-                ? "Nothing matches that."
-                : "Type to search the feed, or pick an action below."}
+                ? "Nothing matches."
+                : "Type to search, or pick an action below."}
           </Command.Empty>
 
           {results.length > 0 ? (
             <Command.Group
               heading="Articles"
-              className="[&_[cmdk-group-heading]]:smallcaps [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-muted-foreground"
+              className="[&_[cmdk-group-heading]]:meta [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5"
             >
               {results.map((item) => (
                 <Command.Item
                   key={item.id}
                   value={item.title}
                   onSelect={() => go(`/item/${item.id}`)}
-                  className="flex cursor-pointer items-start gap-3 rounded-md px-2 py-2.5 data-[selected=true]:bg-muted"
+                  className="flex cursor-pointer items-start gap-3 rounded-sm px-2 py-2 data-[selected=true]:bg-muted"
                 >
                   <FileText
                     className="mt-0.5 size-4 shrink-0 text-muted-foreground"
                     strokeWidth={1.5}
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-serif text-sm text-foreground">
+                    <p className="truncate text-[13px] text-foreground">
                       {item.title}
                     </p>
-                    <p className="smallcaps mt-0.5 text-muted-foreground">
+                    <p className="meta mt-0.5">
                       {item.source
                         .replace("rss:", "")
                         .replace("github-release:", "")}
@@ -153,62 +151,63 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
           <Command.Group
             heading="Navigate"
-            className="[&_[cmdk-group-heading]]:smallcaps [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-muted-foreground"
+            className="[&_[cmdk-group-heading]]:meta [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5"
           >
             <PaletteItem
               icon={Newspaper}
-              label="Today's briefing"
-              shortcut="G D"
+              label="Today"
+              shortcut="g d"
               onSelect={() => go("/dashboard")}
             />
             <PaletteItem
               icon={Sparkles}
-              label="Weekly digest"
-              shortcut="G W"
+              label="This week"
+              shortcut="g w"
               onSelect={() => go("/digest")}
             />
             <PaletteItem
               icon={Bookmark}
-              label="Saved articles"
-              shortcut="G S"
+              label="Saved"
+              shortcut="g s"
               onSelect={() => go("/saved")}
             />
             <PaletteItem
               icon={Clock}
               label="Read later"
-              shortcut="G L"
+              shortcut="g l"
               onSelect={() => go("/read-later")}
             />
             <PaletteItem
               icon={LayoutList}
-              label="Extended view (last 7 days)"
+              label="Show last 7 days"
               onSelect={() => go("/dashboard?window=extended")}
             />
             <PaletteItem
               icon={FileText}
-              label="Colophon — design & engineering notes"
+              label="Colophon"
               onSelect={() => go("/colophon")}
             />
           </Command.Group>
 
           <Command.Group
             heading="Actions"
-            className="[&_[cmdk-group-heading]]:smallcaps [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:text-muted-foreground"
+            className="[&_[cmdk-group-heading]]:meta [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5"
           >
             <PaletteItem
               icon={resolvedTheme === "dark" ? Sun : Moon}
               label={
                 resolvedTheme === "dark"
-                  ? "Switch to light theme"
-                  : "Switch to dark theme"
+                  ? "Switch to light"
+                  : "Switch to dark"
               }
+              shortcut="t"
               onSelect={toggleTheme}
             />
           </Command.Group>
         </Command.List>
 
-        <div className="smallcaps flex items-center justify-between border-t border-border bg-muted/30 px-4 py-2 text-muted-foreground">
-          <span>Press ↑↓ to navigate · ↵ to select</span>
+        <div className="meta flex items-center justify-between border-t border-border bg-muted/30 px-3 py-1.5">
+          <span>↑↓ navigate · ↵ select</span>
           <span>⌘K to toggle</span>
         </div>
       </div>
@@ -231,15 +230,15 @@ function PaletteItem({
     <Command.Item
       value={label}
       onSelect={onSelect}
-      className="flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 data-[selected=true]:bg-muted"
+      className="flex cursor-pointer items-center gap-3 rounded-sm px-2 py-1.5 data-[selected=true]:bg-muted"
     >
       <Icon
         className="size-4 shrink-0 text-muted-foreground"
         strokeWidth={1.5}
       />
-      <span className="flex-1 font-serif text-sm text-foreground">{label}</span>
+      <span className="flex-1 text-[13px] text-foreground">{label}</span>
       {shortcut ? (
-        <kbd className="smallcaps rounded-sm border border-border px-1.5 py-0.5 text-muted-foreground">
+        <kbd className="rounded-sm border border-border px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
           {shortcut}
         </kbd>
       ) : null}

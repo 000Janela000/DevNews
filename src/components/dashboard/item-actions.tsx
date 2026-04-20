@@ -66,7 +66,7 @@ export function ItemActions({
           body: JSON.stringify({ itemId, action }),
         });
         if (!res.ok) throw new Error();
-        toast(isActive ? meta.onRemove : meta.onAdd, { duration: 1800 });
+        toast(isActive ? meta.onRemove : meta.onAdd, { duration: 1600 });
       } catch {
         setStates((prev) => {
           const next = new Set(prev);
@@ -94,7 +94,7 @@ export function ItemActions({
               toggleAction(action);
             }}
             className={cn(
-              "inline-flex size-8 items-center justify-center rounded-sm transition-colors",
+              "inline-flex size-7 items-center justify-center rounded-sm transition-colors",
               isActive
                 ? "text-accent"
                 : "text-muted-foreground hover:text-foreground"
@@ -103,7 +103,7 @@ export function ItemActions({
             aria-pressed={isActive}
           >
             <Icon
-              className="size-4"
+              className="size-3.5"
               strokeWidth={1.5}
               fill={isActive ? "currentColor" : "none"}
             />
@@ -116,9 +116,9 @@ export function ItemActions({
               toggleAction(action);
             }}
             className={cn(
-              "smallcaps inline-flex items-center gap-1.5 rounded-sm border px-3 py-1.5 transition-colors",
+              "inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1 text-[12px] font-medium transition-colors",
               isActive
-                ? "border-accent text-accent"
+                ? "border-accent/50 text-accent"
                 : "border-border text-muted-foreground hover:border-border-strong hover:text-foreground"
             )}
             aria-pressed={isActive}

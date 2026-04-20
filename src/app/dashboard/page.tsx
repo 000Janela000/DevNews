@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Header } from "@/components/dashboard/header";
-import { Masthead } from "@/components/masthead";
 import { DashboardContent } from "./content";
 import {
   getRecentItems,
@@ -51,13 +50,12 @@ export default async function DashboardPage({
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <Masthead section="briefing" />
-      <main className="pb-24">
+      <main className="pb-20">
         {dbError ? (
-          <div className="mx-auto max-w-3xl px-4">
-            <div className="rounded-sm border border-destructive/30 bg-destructive/5 p-4 font-serif text-sm italic text-destructive">
-              Database not connected. Set <code className="font-mono">DATABASE_URL</code> and
-              run <code className="font-mono">npm run db:push</code>.
+          <div className="mx-auto max-w-3xl px-4 pt-8">
+            <div className="rounded-sm border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+              Database not connected. Set <code className="font-mono text-xs">DATABASE_URL</code>
+              {" "}and run <code className="font-mono text-xs">npm run db:push</code>.
             </div>
           </div>
         ) : (
@@ -67,30 +65,22 @@ export default async function DashboardPage({
               remainingItems={remainingItems}
               totalMinutes={totalMinutes}
             />
-            <div className="mx-auto mt-16 flex max-w-3xl flex-wrap items-center justify-center gap-x-6 gap-y-3 px-4 text-center">
+            <div className="mx-auto mt-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-5 gap-y-2 px-4 text-[12px] text-muted-foreground">
               {isExtended ? (
-                <Link
-                  href="/dashboard"
-                  className="smallcaps text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  ← Show only last 48 hours
+                <Link href="/dashboard" className="hover:text-foreground">
+                  ← last 48 hours
                 </Link>
               ) : (
                 <Link
                   href="/dashboard?window=extended"
-                  className="smallcaps text-muted-foreground transition-colors hover:text-foreground"
+                  className="hover:text-foreground"
                 >
-                  Show last 7 days →
+                  show last 7 days →
                 </Link>
               )}
-              <span aria-hidden className="smallcaps text-muted-foreground">
-                ·
-              </span>
-              <Link
-                href="/colophon"
-                className="smallcaps text-muted-foreground transition-colors hover:text-foreground"
-              >
-                Colophon
+              <span aria-hidden>·</span>
+              <Link href="/colophon" className="hover:text-foreground">
+                colophon
               </Link>
             </div>
           </>

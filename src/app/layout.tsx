@@ -1,14 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
 import { KeyboardProvider } from "@/components/keyboard-provider";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  axes: ["opsz", "SOFT", "WONK"],
+  axes: ["opsz"],
   display: "swap",
 });
 
@@ -56,8 +56,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf8f4" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a1c20" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f5ef" },
+    { media: "(prefers-color-scheme: dark)", color: "#282c32" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -68,11 +68,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${fraunces.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${inter.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
-          enableSystem
+          enableSystem={false}
           disableTransitionOnChange
         >
           {children}
@@ -81,8 +81,8 @@ export default function RootLayout({
             position="bottom-right"
             toastOptions={{
               style: {
-                fontFamily: "var(--font-fraunces), serif",
-                fontSize: "14px",
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "13px",
               },
             }}
           />

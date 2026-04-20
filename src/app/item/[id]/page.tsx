@@ -15,6 +15,14 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
+const CATEGORY_COLOR: Record<Category, string> = {
+  models_releases: "bg-[var(--cat-models)]",
+  tools_frameworks: "bg-[var(--cat-tools)]",
+  practices_approaches: "bg-[var(--cat-practices)]",
+  industry_trends: "bg-[var(--cat-industry)]",
+  research_papers: "bg-[var(--cat-research)]",
+};
+
 export default async function ItemDetailPage({ params }: PageProps) {
   const { id } = await params;
 
@@ -46,7 +54,9 @@ export default async function ItemDetailPage({ params }: PageProps) {
   const metadata = (item.metadata ?? {}) as Record<string, unknown>;
   const hnUrl = metadata.hnUrl as string | undefined;
   const pdfUrl = metadata.pdfUrl as string | undefined;
-  const sourceLabel = item.source.replace("rss:", "").replace("github-release:", "");
+  const sourceLabel = item.source
+    .replace("rss:", "")
+    .replace("github-release:", "");
   const contentText = item.content ? stripHtml(item.content, 10000) : "";
   const truncated = item.content ? isContentTruncated(item.content) : false;
 
@@ -54,19 +64,21 @@ export default async function ItemDetailPage({ params }: PageProps) {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="mx-auto max-w-3xl px-4 pt-10 pb-32 sm:pt-16">
-        {/* Back link — quiet, top-left */}
+      <main className="mx-auto max-w-2xl px-4 pt-8 pb-24">
         <Link
           href="/dashboard"
-          className="smallcaps inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+          className="meta inline-flex items-center gap-1.5 hover:text-foreground"
         >
           <ArrowLeft className="size-3" strokeWidth={1.5} />
-          Back to briefing
+          Back
         </Link>
 
-        <article className="mt-10 sm:mt-12">
-          {/* Editorial meta strip */}
-          <div className="smallcaps flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground">
+        <article className="mt-8">
+          <div className="meta flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span
+              aria-hidden
+              className={`inline-block size-[6px] rounded-full ${CATEGORY_COLOR[item.category as Category]}`}
+            />
             <span>{CATEGORY_LABELS[item.category as Category]}</span>
             <span aria-hidden>·</span>
             <span>{sourceLabel}</span>
@@ -80,32 +92,29 @@ export default async function ItemDetailPage({ params }: PageProps) {
             {item.importance && item.importance >= 4 ? (
               <>
                 <span aria-hidden>·</span>
-                <span className="text-accent">High impact</span>
+                <span className="text-accent">high impact</span>
               </>
             ) : null}
           </div>
 
-          {/* Title — serif display, big, balanced */}
-          <h1 className="display mt-4 font-serif text-3xl font-medium text-foreground sm:text-[42px]">
+          <h1 className="mt-3 text-[28px] font-semibold leading-[1.2] tracking-[-0.015em] text-foreground">
             {item.title}
           </h1>
 
-          {/* Summary — editorial "dek" style, oversized italic lead */}
           {item.summary ? (
-            <p className="prose-body mt-6 font-serif text-lg italic leading-[1.5] text-muted-foreground">
+            <p className="prose-body mt-5 text-[16px] text-foreground/85">
               {item.summary}
             </p>
           ) : null}
 
-          {/* Action bar — full buttons, not compact */}
-          <div className="mt-8 flex flex-wrap items-center gap-3 border-y border-border py-4">
+          <div className="mt-6 flex flex-wrap items-center gap-3 border-y border-border py-3">
             <ItemActions itemId={item.id} compact={false} />
-            <div className="ml-auto flex items-center gap-4">
+            <div className="ml-auto flex items-center gap-3 text-[12px]">
               <a
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="smallcaps inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground"
               >
                 Original
                 <ExternalLink className="size-3" strokeWidth={1.5} />
@@ -115,7 +124,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                   href={hnUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="smallcaps text-muted-foreground transition-colors hover:text-accent"
+                  className="text-muted-foreground hover:text-accent"
                 >
                   HN
                 </a>
@@ -125,7 +134,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                   href={pdfUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="smallcaps text-muted-foreground transition-colors hover:text-accent"
+                  className="text-muted-foreground hover:text-accent"
                 >
                   PDF
                 </a>
@@ -133,26 +142,24 @@ export default async function ItemDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Body — Stratechery-style single column serif reading */}
           {contentText ? (
-            <div className="prose-body mt-10 whitespace-pre-wrap font-serif text-base leading-[1.65] text-foreground/90 first-letter:float-left first-letter:pr-2 first-letter:font-serif first-letter:text-5xl first-letter:font-medium first-letter:leading-[0.85] first-letter:text-foreground">
+            <div className="prose-body mt-8 whitespace-pre-wrap text-[15px] text-foreground/90">
               {contentText}
             </div>
           ) : null}
 
           {truncated ? (
-            <p className="mt-6 font-serif text-sm italic text-muted-foreground">
-              Article truncated — open the original above for the full piece.
+            <p className="mt-5 text-[13px] text-muted-foreground">
+              Truncated — open original for the full article.
             </p>
           ) : null}
 
-          {/* Tags — editorial footer */}
           {item.tags && item.tags.length > 0 ? (
-            <div className="mt-12 flex flex-wrap gap-2 border-t border-border pt-6">
+            <div className="mt-10 flex flex-wrap gap-1.5 border-t border-border pt-5">
               {item.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="smallcaps rounded-sm border border-border px-2 py-1 text-muted-foreground"
+                  className="rounded-sm border border-border px-1.5 py-0.5 text-[11px] text-muted-foreground"
                 >
                   {tag}
                 </span>
@@ -160,29 +167,28 @@ export default async function ItemDetailPage({ params }: PageProps) {
             </div>
           ) : null}
 
-          {/* Cluster sources — "also covered by" footer */}
           {clusterSources.length > 0 ? (
-            <aside className="mt-12 border-t border-border pt-6">
-              <div className="smallcaps text-accent">
-                Also covered by {clusterSources.length} other source
+            <aside className="mt-10 border-t border-border pt-5">
+              <div className="meta text-accent">
+                also covered by {clusterSources.length} other source
                 {clusterSources.length > 1 ? "s" : ""}
               </div>
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-3 space-y-3">
                 {clusterSources.map((s) => (
                   <li key={s.id}>
                     <a
                       href={s.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group flex items-center justify-between gap-4 rounded-sm py-2 transition-colors hover:text-accent"
+                      className="group flex items-center justify-between gap-4 py-1.5 hover:text-accent"
                     >
                       <div className="min-w-0">
-                        <p className="font-serif text-base leading-snug">
-                          {s.title}
-                        </p>
-                        <p className="smallcaps mt-1 text-muted-foreground">
-                          {s.source.replace("rss:", "").replace("github-release:", "")}{" "}
-                          ·{" "}
+                        <p className="text-[14px] leading-snug">{s.title}</p>
+                        <p className="meta mt-0.5">
+                          {s.source
+                            .replace("rss:", "")
+                            .replace("github-release:", "")}
+                          {" · "}
                           <span className="font-mono tabular">
                             {formatDistanceToNow(new Date(s.publishedAt), {
                               addSuffix: true,
@@ -191,7 +197,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                         </p>
                       </div>
                       <ExternalLink
-                        className="size-4 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-accent"
+                        className="size-3.5 shrink-0 text-muted-foreground/50 transition-colors group-hover:text-accent"
                         strokeWidth={1.5}
                       />
                     </a>

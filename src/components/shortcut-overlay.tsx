@@ -11,29 +11,27 @@ const SHORTCUTS: Array<{ group: string; items: Array<{ keys: string; label: stri
   {
     group: "Global",
     items: [
-      { keys: "⌘ K", label: "Open command palette" },
+      { keys: "⌘ k", label: "Open command palette" },
       { keys: "?", label: "Show these shortcuts" },
-      { keys: "T", label: "Toggle theme" },
-      { keys: "Esc", label: "Close overlays" },
+      { keys: "t", label: "Toggle theme" },
+      { keys: "esc", label: "Close overlays" },
     ],
   },
   {
-    group: "Navigation",
+    group: "Navigate",
     items: [
-      { keys: "G D", label: "Go to today's briefing" },
-      { keys: "G W", label: "Go to weekly digest" },
-      { keys: "G S", label: "Go to saved" },
-      { keys: "G L", label: "Go to read later" },
+      { keys: "g d", label: "Go to today" },
+      { keys: "g w", label: "Go to this week" },
+      { keys: "g s", label: "Go to saved" },
+      { keys: "g l", label: "Go to read later" },
     ],
   },
   {
     group: "Feed",
     items: [
-      { keys: "J", label: "Next article" },
-      { keys: "K", label: "Previous article" },
+      { keys: "j", label: "Next article" },
+      { keys: "k", label: "Previous article" },
       { keys: "↵", label: "Open focused article" },
-      { keys: "S", label: "Save focused article" },
-      { keys: "E", label: "Mark focused article read" },
     ],
   },
 ];
@@ -43,20 +41,20 @@ export function ShortcutOverlay({ open, onClose }: ShortcutOverlayProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/40 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/40 backdrop-blur-sm px-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
       <div
-        className="w-full max-w-lg overflow-hidden rounded-lg border border-border bg-background shadow-2xl"
+        className="w-full max-w-md overflow-hidden rounded-md border border-border bg-background shadow-xl"
         role="dialog"
         aria-labelledby="shortcuts-title"
       >
-        <div className="flex items-center justify-between border-b border-border px-5 py-3">
+        <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
           <h2
             id="shortcuts-title"
-            className="font-serif text-base font-medium tracking-tight"
+            className="text-[14px] font-semibold tracking-[-0.005em]"
           >
             Keyboard shortcuts
           </h2>
@@ -69,20 +67,18 @@ export function ShortcutOverlay({ open, onClose }: ShortcutOverlayProps) {
           </button>
         </div>
 
-        <div className="space-y-6 p-5">
+        <div className="space-y-5 p-4">
           {SHORTCUTS.map((group) => (
             <section key={group.group}>
-              <h3 className="smallcaps mb-2 text-muted-foreground">
-                {group.group}
-              </h3>
-              <div className="space-y-1.5">
+              <h3 className="meta mb-1.5">{group.group}</h3>
+              <div className="space-y-1">
                 {group.items.map((s) => (
                   <div
                     key={s.keys}
-                    className="flex items-center justify-between font-serif text-sm"
+                    className="flex items-center justify-between text-[13px]"
                   >
                     <span className="text-foreground">{s.label}</span>
-                    <kbd className="smallcaps rounded-sm border border-border bg-muted/40 px-2 py-0.5 text-muted-foreground">
+                    <kbd className="rounded-sm border border-border bg-muted/40 px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
                       {s.keys}
                     </kbd>
                   </div>

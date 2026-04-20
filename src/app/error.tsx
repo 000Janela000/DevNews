@@ -17,35 +17,33 @@ export default function Error({
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <div className="smallcaps text-accent">An error interrupted reading</div>
-        <h1 className="display mt-3 font-serif text-4xl font-medium text-foreground sm:text-[52px]">
-          Something came loose.
+      <div className="max-w-sm text-center">
+        <h1 className="text-[20px] font-semibold tracking-[-0.01em] text-foreground">
+          Something went wrong.
         </h1>
-        <p className="prose-body mx-auto mt-5 font-serif text-base italic leading-[1.55] text-muted-foreground">
-          {error.message ||
-            "An unexpected error occurred. Retry — and if it happens again, the digest page may still work."}
+        <p className="mt-2 text-[14px] text-muted-foreground">
+          {error.message || "An unexpected error occurred."}
         </p>
 
-        <div className="mt-8 flex items-center justify-center gap-4">
+        <div className="mt-6 flex items-center justify-center gap-3 text-[13px]">
           <button
             onClick={reset}
-            className="smallcaps inline-flex items-center gap-2 rounded-sm border border-foreground bg-foreground px-5 py-2.5 text-background transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-1.5 rounded-sm border border-border-strong bg-foreground px-3 py-1.5 font-medium text-background transition-opacity hover:opacity-90"
           >
-            <RefreshCw className="size-3.5" strokeWidth={1.5} />
+            <RefreshCw className="size-3" strokeWidth={1.5} />
             Try again
           </button>
           <Link
             href="/dashboard"
-            className="smallcaps text-muted-foreground transition-colors hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground"
           >
-            Back to briefing
+            Back to today
           </Link>
         </div>
 
         {error.digest ? (
-          <div className="smallcaps mt-10 text-muted-foreground">
-            Error reference{" "}
+          <div className="meta mt-8">
+            Reference{" "}
             <span className="font-mono tabular">{error.digest}</span>
           </div>
         ) : null}

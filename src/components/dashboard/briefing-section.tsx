@@ -22,29 +22,20 @@ export function BriefingSection({ items, totalMinutes }: BriefingSectionProps) {
 
   if (items.length === 0) {
     return (
-      <div className="py-24 text-center">
-        <p className="font-serif italic text-muted-foreground">
-          Nothing new this hour — the internet took a breath.
-        </p>
+      <div className="py-16 text-center text-sm text-muted-foreground">
+        No new items right now.
       </div>
     );
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-4">
-      {/* Section label — editorial kicker */}
-      <div className="smallcaps mb-1 flex items-baseline justify-between text-muted-foreground">
-        <span>The briefing</span>
-        <span className="font-mono tabular">
-          {items.length} items · ~{totalMinutes} min
+    <section className="mx-auto max-w-3xl px-4 pt-4">
+      <div className="meta flex items-center justify-between pb-2">
+        <span>
+          {items.length} item{items.length === 1 ? "" : "s"} · ~{totalMinutes}{" "}
+          min
         </span>
       </div>
-
-      <h2 className="font-serif text-2xl font-medium tracking-tight text-foreground">
-        What shipped, what changed, and why you care.
-      </h2>
-
-      <div className="mt-2 h-px w-full bg-border" />
 
       <div className="divide-y divide-border">
         {items.map((item) => (
