@@ -79,29 +79,36 @@ export default function OpenGraphImage() {
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderTop: "3px double #2a2622",
-            paddingTop: 20,
-            fontSize: 18,
-            letterSpacing: 4,
-            textTransform: "uppercase",
-            color: "#6b5f54",
-            fontFamily: "monospace",
-          }}
-        >
-          <span>Summaries first · drill-down on demand</span>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {/* Double-rule rendered as two stacked thin lines — satori
+              doesn't support `border: double`, but two solid borders
+              with a 3px gap is visually identical. */}
+          <div style={{ height: 1, backgroundColor: "#2a2622" }} />
+          <div style={{ height: 3 }} />
+          <div style={{ height: 1, backgroundColor: "#2a2622" }} />
           <div
             style={{
-              width: 10,
-              height: 10,
-              borderRadius: "50%",
-              backgroundColor: "#b74a28",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              paddingTop: 20,
+              fontSize: 18,
+              letterSpacing: 4,
+              textTransform: "uppercase",
+              color: "#6b5f54",
+              fontFamily: "monospace",
             }}
-          />
+          >
+            <span>Summaries first · drill-down on demand</span>
+            <div
+              style={{
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                backgroundColor: "#b74a28",
+              }}
+            />
+          </div>
         </div>
       </div>
     ),
