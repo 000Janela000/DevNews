@@ -1,19 +1,8 @@
 import Link from "next/link";
 import { formatDistanceToNow, format, startOfWeek, endOfWeek } from "date-fns";
-import {
-  ArrowLeft,
-  ExternalLink,
-  Bot,
-  Wrench,
-  Lightbulb,
-  TrendingUp,
-  BookOpen,
-  Calendar,
-  Sparkles,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ExternalLink } from "lucide-react";
 import { Header } from "@/components/dashboard/header";
-import { CATEGORY_BADGE_COLORS } from "@/components/dashboard/category-tabs";
+import { Masthead } from "@/components/masthead";
 import { CATEGORY_LABELS, type Category } from "@/lib/types";
 import {
   getWeeklyTopItems,
@@ -24,17 +13,25 @@ import type { ItemRow } from "@/lib/db";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Weekly Digest",
-  description: "This week's most important AI developments for developers",
+  title: "Weekly digest",
+  description: "The week in AI for people who build software.",
 };
 
-const CATEGORY_ICONS: Record<Category, React.ElementType> = {
-  models_releases: Bot,
-  tools_frameworks: Wrench,
-  practices_approaches: Lightbulb,
-  industry_trends: TrendingUp,
-  research_papers: BookOpen,
+const CATEGORY_COLOR: Record<Category, string> = {
+  models_releases: "bg-[var(--cat-models)]",
+  tools_frameworks: "bg-[var(--cat-tools)]",
+  practices_approaches: "bg-[var(--cat-practices)]",
+  industry_trends: "bg-[var(--cat-industry)]",
+  research_papers: "bg-[var(--cat-research)]",
 };
+
+const CATEGORY_ORDER: Category[] = [
+  "models_releases",
+  "tools_frameworks",
+  "practices_approaches",
+  "industry_trends",
+  "research_papers",
+];
 
 function groupByCategory(items: ItemRow[]): Record<string, ItemRow[]> {
   const grouped: Record<string, ItemRow[]> = {};
@@ -65,157 +62,141 @@ export default async function DigestPage() {
   const grouped = groupByCategory(items);
   const totalItems = counts.reduce((s, c) => s + c.count, 0);
 
-  const categoryOrder: Category[] = [
-    "models_releases",
-    "tools_frameworks",
-    "practices_approaches",
-    "industry_trends",
-    "research_papers",
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-        <Link
-          href="/dashboard"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="size-3.5" />
-          Back to dashboard
-        </Link>
+      <Masthead section="digest" />
 
-        {/* Digest header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="size-5 text-yellow-400" />
-            <h1 className="text-2xl font-bold tracking-tight">
-              Weekly Digest
-            </h1>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="size-3.5" />
-            <span>
-              {format(weekStart, "MMM d")} – {format(weekEnd, "MMM d, yyyy")}
+      <main className="mx-auto max-w-3xl px-4 pb-32">
+        <div className="smallcaps mb-1 flex items-baseline justify-between text-muted-foreground">
+          <span>
+            Week of{" "}
+            <span className="font-mono tabular">
+              {format(weekStart, "MMM d")} – {format(weekEnd, "MMM d")}
             </span>
-            <span className="text-muted-foreground">·</span>
-            <span>{totalItems} items tracked this week</span>
-          </div>
+          </span>
+          <span className="font-mono tabular">{totalItems} tracked</span>
         </div>
 
-        {dbError && (
-          <div className="mb-6 rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3 text-sm text-yellow-400">
+        <h2 className="font-serif text-2xl font-medium tracking-tight text-foreground">
+          What shipped across the week, by category.
+        </h2>
+
+        <div className="mt-2 h-px w-full bg-border" />
+
+        {dbError ? (
+          <div className="mt-6 rounded-sm border border-destructive/30 bg-destructive/5 p-4 font-serif italic text-destructive">
             Database not connected.
           </div>
-        )}
+        ) : null}
 
-        {/* Quick stats */}
-        {counts.length > 0 && (
-          <div className="mb-8 grid grid-cols-2 gap-2 sm:grid-cols-5">
-            {categoryOrder.map((cat) => {
-              const Icon = CATEGORY_ICONS[cat];
-              const count =
-                counts.find((c) => c.category === cat)?.count ?? 0;
+        {/* Category counts as editorial summary row */}
+        {counts.length > 0 ? (
+          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-5">
+            {CATEGORY_ORDER.map((cat) => {
+              const count = counts.find((c) => c.category === cat)?.count ?? 0;
               return (
-                <div
-                  key={cat}
-                  className="rounded-lg border border-border bg-card p-3"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <Icon className="size-3.5 text-muted-foreground" />
-                    <span className="text-lg font-semibold">{count}</span>
-                  </div>
-                  <p className="truncate text-[10px] text-muted-foreground">
+                <div key={cat} className="flex flex-col">
+                  <span className="font-mono text-2xl font-medium tabular text-foreground">
+                    {count}
+                  </span>
+                  <span className="smallcaps mt-0.5 text-muted-foreground">
+                    <span
+                      aria-hidden
+                      className={`mr-1.5 inline-block size-[7px] translate-y-[-1px] rounded-full ${CATEGORY_COLOR[cat]}`}
+                    />
                     {CATEGORY_LABELS[cat]}
-                  </p>
+                  </span>
                 </div>
               );
             })}
           </div>
-        )}
+        ) : null}
 
-        {/* Items by category */}
         {items.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 py-16 text-center">
-            <p className="text-sm text-muted-foreground">
-              No items this week yet. Check back later.
-            </p>
+          <div className="py-24 text-center font-serif italic text-muted-foreground">
+            No items this week yet — check back later.
           </div>
         ) : (
-          <div className="space-y-8">
-            {categoryOrder.map((cat) => {
+          <div className="mt-12 space-y-16">
+            {CATEGORY_ORDER.map((cat) => {
               const catItems = grouped[cat];
               if (!catItems || catItems.length === 0) return null;
-              const Icon = CATEGORY_ICONS[cat];
 
               return (
                 <section key={cat}>
-                  <div className="mb-3 flex items-center gap-2">
-                    <Icon className="size-4 text-muted-foreground" />
-                    <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                      {CATEGORY_LABELS[cat]}
-                    </h2>
-                    <Badge variant="secondary" className="text-[10px]">
+                  <div className="smallcaps flex items-baseline gap-3 text-accent">
+                    <span
+                      aria-hidden
+                      className={`inline-block size-[7px] translate-y-[-1px] rounded-full ${CATEGORY_COLOR[cat]}`}
+                    />
+                    <span>{CATEGORY_LABELS[cat]}</span>
+                    <span className="ml-auto font-mono text-muted-foreground tabular">
                       {catItems.length}
-                    </Badge>
+                    </span>
                   </div>
+                  <div className="mt-1 h-px w-full bg-border" />
 
-                  <div className="space-y-2">
+                  <ul className="divide-y divide-border">
                     {catItems.map((item) => (
-                      <div
+                      <li
                         key={item.id}
-                        className="group rounded-lg border border-border bg-card p-3 transition-colors hover:border-border/80"
+                        className="py-5 first:pt-5 last:pb-0"
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="mb-1 flex items-center gap-1.5">
-                              <Badge
-                                variant="outline"
-                                className={`text-[10px] ${CATEGORY_BADGE_COLORS[cat]}`}
-                              >
-                                {item.source}
-                              </Badge>
-                              {item.importance && item.importance >= 4 && (
-                                <Badge
-                                  variant="outline"
-                                  className="border-yellow-500/20 bg-yellow-500/10 text-[10px] text-yellow-400"
-                                >
-                                  High Impact
-                                </Badge>
-                              )}
-                            </div>
-                            <Link
-                              href={`/item/${item.id}`}
-                              className="text-sm font-medium leading-snug hover:text-primary"
-                              aria-label={item.title}
+                        <Link href={`/item/${item.id}`} className="block">
+                          <div className="smallcaps flex flex-wrap items-center gap-x-2.5 gap-y-1 text-muted-foreground">
+                            <span>
+                              {item.source
+                                .replace("rss:", "")
+                                .replace("github-release:", "")}
+                            </span>
+                            <span aria-hidden>·</span>
+                            <time
+                              dateTime={new Date(item.publishedAt).toISOString()}
+                              className="font-mono tabular"
                             >
-                              {item.title}
-                            </Link>
-                            {item.summary && (
-                              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                                {item.summary}
-                              </p>
-                            )}
-                            <p className="mt-1.5 text-[11px] text-muted-foreground">
                               {formatDistanceToNow(
                                 new Date(item.publishedAt),
                                 { addSuffix: true }
                               )}
-                            </p>
+                            </time>
+                            {item.importance && item.importance >= 4 ? (
+                              <>
+                                <span aria-hidden>·</span>
+                                <span className="text-accent">
+                                  high impact
+                                </span>
+                              </>
+                            ) : null}
                           </div>
+
+                          <h3 className="mt-1 font-serif text-lg font-medium leading-snug tracking-tight text-foreground">
+                            {item.title}
+                          </h3>
+
+                          {item.summary ? (
+                            <p className="prose-body mt-1 text-[15px] text-muted-foreground">
+                              {item.summary}
+                            </p>
+                          ) : null}
+                        </Link>
+                        <div className="mt-2 flex justify-end">
                           <a
                             href={item.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="shrink-0 rounded-md p-1.5 text-muted-foreground opacity-0 hover:bg-muted group-hover:opacity-100"
-                            aria-label={`Read: ${item.title}`}
+                            className="smallcaps inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
                           >
-                            <ExternalLink className="size-3.5" />
+                            Original
+                            <ExternalLink
+                              className="size-3"
+                              strokeWidth={1.5}
+                            />
                           </a>
                         </div>
-                      </div>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
                 </section>
               );
             })}

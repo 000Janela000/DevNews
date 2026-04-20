@@ -1,23 +1,27 @@
 import Link from "next/link";
-import { FileQuestion } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-4 text-center">
-        <FileQuestion className="size-12 text-muted-foreground" />
-        <div>
-          <h2 className="text-lg font-semibold">Page not found</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            The page you&apos;re looking for doesn&apos;t exist.
-          </p>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="max-w-md text-center">
+        <div className="smallcaps text-accent">404 · Not on the page</div>
+        <h1 className="display mt-3 font-serif text-4xl font-medium text-foreground sm:text-[52px]">
+          This page never ran.
+        </h1>
+        <p className="prose-body mx-auto mt-5 font-serif text-base italic leading-[1.55] text-muted-foreground">
+          Either the link is stale, the article was pruned from the 14-day
+          archive, or the edition you&apos;re looking for hasn&apos;t been
+          printed.
+        </p>
+
+        <div className="mt-8">
+          <Link
+            href="/dashboard"
+            className="smallcaps inline-flex items-center gap-2 rounded-sm border border-foreground bg-foreground px-5 py-2.5 text-background transition-opacity hover:opacity-90"
+          >
+            Back to today&apos;s briefing
+          </Link>
         </div>
-        <Link href="/dashboard">
-          <Button variant="outline" size="sm">
-            Back to dashboard
-          </Button>
-        </Link>
       </div>
     </div>
   );

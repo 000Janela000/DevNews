@@ -1,15 +1,22 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { formatDistanceToNow } from "date-fns";
-import { ArrowLeft, Bookmark, ExternalLink } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow, format } from "date-fns";
+import { ExternalLink } from "lucide-react";
 import { Header } from "@/components/dashboard/header";
+import { Masthead } from "@/components/masthead";
 import { CATEGORY_LABELS, type Category } from "@/lib/types";
-import { CATEGORY_BADGE_COLORS } from "@/components/dashboard/category-tabs";
 import { getUser } from "@/lib/supabase/user";
 import { getUserItemsByAction } from "@/lib/db/user-state";
 
 export const dynamic = "force-dynamic";
+
+const CATEGORY_COLOR: Record<Category, string> = {
+  models_releases: "bg-[var(--cat-models)]",
+  tools_frameworks: "bg-[var(--cat-tools)]",
+  practices_approaches: "bg-[var(--cat-practices)]",
+  industry_trends: "bg-[var(--cat-industry)]",
+  research_papers: "bg-[var(--cat-research)]",
+};
 
 export default async function SavedPage() {
   const user = await getUser();
@@ -20,83 +27,93 @@ export default async function SavedPage() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-        <Link
-          href="/dashboard"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="size-3.5" />
-          Back to dashboard
-        </Link>
+      <Masthead section="saved" />
 
-        <div className="mb-6 flex items-center gap-2">
-          <Bookmark className="size-5 text-blue-400" />
-          <h1 className="text-xl font-bold tracking-tight">Saved Items</h1>
-          <Badge variant="secondary" className="text-xs">
-            {items.length}
-          </Badge>
+      <main className="mx-auto max-w-3xl px-4 pb-32">
+        <div className="smallcaps mb-1 flex items-baseline justify-between text-muted-foreground">
+          <span>Your saved archive</span>
+          <span className="font-mono tabular">{items.length} items</span>
         </div>
 
+        <h2 className="font-serif text-2xl font-medium tracking-tight text-foreground">
+          The pieces you&apos;ve chosen to keep.
+        </h2>
+
+        <div className="mt-2 h-px w-full bg-border" />
+
         {items.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 py-16 text-center">
-            <Bookmark className="size-10 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">No saved items yet</p>
-            <p className="text-xs text-muted-foreground">
-              Click the bookmark icon on any item to save it here
-            </p>
+          <div className="py-24 text-center font-serif italic text-muted-foreground">
+            Nothing saved yet — click the bookmark icon on any article to put
+            it here.
           </div>
         ) : (
-          <div className="space-y-2">
+          <ul className="divide-y divide-border">
             {items.map((item) => (
-              <div
-                key={item.id}
-                className="group rounded-lg border border-border bg-card p-3 transition-colors hover:border-border/80"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-1 flex items-center gap-1.5">
-                      <Badge
-                        variant="outline"
-                        className={`text-[10px] ${CATEGORY_BADGE_COLORS[item.category as Category]}`}
-                      >
-                        {CATEGORY_LABELS[item.category as Category]?.split(" ")[0] ?? item.category}
-                      </Badge>
-                      <Badge variant="outline" className="text-[10px]">
-                        {item.source}
-                      </Badge>
-                    </div>
-                    <Link
-                      href={`/item/${item.id}`}
-                      className="text-sm font-medium leading-snug hover:text-primary"
-                      aria-label={item.title}
+              <li key={item.id} className="py-6 first:pt-0 last:pb-0">
+                <Link href={`/item/${item.id}`} className="block">
+                  <div className="smallcaps flex flex-wrap items-center gap-x-2.5 gap-y-1 text-muted-foreground">
+                    <span
+                      aria-hidden
+                      className={`inline-block size-[7px] rounded-full ${
+                        CATEGORY_COLOR[item.category as Category]
+                      }`}
+                    />
+                    <span>
+                      {
+                        CATEGORY_LABELS[item.category as Category]?.split(
+                          " "
+                        )[0]
+                      }
+                    </span>
+                    <span aria-hidden>·</span>
+                    <span>
+                      {item.source
+                        .replace("rss:", "")
+                        .replace("github-release:", "")}
+                    </span>
+                    <span aria-hidden>·</span>
+                    <time
+                      dateTime={new Date(item.actionDate).toISOString()}
+                      className="font-mono tabular"
                     >
-                      {item.title}
-                    </Link>
-                    {item.summary && (
-                      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                        {item.summary}
-                      </p>
-                    )}
-                    <p className="mt-1.5 text-[11px] text-muted-foreground">
                       Saved{" "}
                       {formatDistanceToNow(new Date(item.actionDate), {
                         addSuffix: true,
                       })}
-                    </p>
+                    </time>
                   </div>
+
+                  <h3 className="mt-2 font-serif text-[21px] font-medium leading-[1.2] tracking-tight text-foreground">
+                    {item.title}
+                  </h3>
+
+                  {item.summary ? (
+                    <p className="prose-body mt-2 text-[15px] text-muted-foreground">
+                      {item.summary}
+                    </p>
+                  ) : null}
+                </Link>
+
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="smallcaps text-muted-foreground">
+                    Originally published{" "}
+                    <span className="font-mono tabular">
+                      {format(new Date(item.publishedAt), "MMM d, yyyy")}
+                    </span>
+                  </span>
                   <a
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="shrink-0 rounded-md p-1.5 text-muted-foreground opacity-0 hover:bg-muted group-hover:opacity-100"
-                    aria-label={`Read: ${item.title}`}
+                    className="smallcaps inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    <ExternalLink className="size-3.5" />
+                    Original
+                    <ExternalLink className="size-3" strokeWidth={1.5} />
                   </a>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
       </main>
     </div>

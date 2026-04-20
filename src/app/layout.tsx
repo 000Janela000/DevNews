@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://dev-news.vercel.app"
+  ),
   title: {
     default: "DevNews — the AI developer's briefing",
     template: "%s · DevNews",
