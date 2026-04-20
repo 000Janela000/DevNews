@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
+import { KeyboardProvider } from "@/components/keyboard-provider";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -72,6 +73,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <KeyboardProvider />
           <Toaster
             position="bottom-right"
             toastOptions={{

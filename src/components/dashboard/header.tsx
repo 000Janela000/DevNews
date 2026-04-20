@@ -13,7 +13,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
  */
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+    <header className="scroll-header sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-11 max-w-3xl items-center justify-between px-4">
         <Link
           href="/dashboard"
