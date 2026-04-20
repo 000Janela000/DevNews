@@ -184,6 +184,11 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               label="Extended view (last 7 days)"
               onSelect={() => go("/dashboard?window=extended")}
             />
+            <PaletteItem
+              icon={FileText}
+              label="Colophon — design & engineering notes"
+              onSelect={() => go("/colophon")}
+            />
           </Command.Group>
 
           <Command.Group

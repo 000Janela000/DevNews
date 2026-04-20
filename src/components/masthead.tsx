@@ -9,7 +9,7 @@ function issueNumber(date: Date): number {
 
 interface MastheadProps {
   /** Optional active section label for the nav underline */
-  section?: "briefing" | "digest" | "saved" | "read-later";
+  section?: "briefing" | "digest" | "saved" | "read-later" | "colophon";
 }
 
 /**

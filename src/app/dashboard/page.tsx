@@ -67,7 +67,7 @@ export default async function DashboardPage({
               remainingItems={remainingItems}
               totalMinutes={totalMinutes}
             />
-            <div className="mx-auto mt-16 flex max-w-3xl justify-center px-4 text-center">
+            <div className="mx-auto mt-16 flex max-w-3xl flex-wrap items-center justify-center gap-x-6 gap-y-3 px-4 text-center">
               {isExtended ? (
                 <Link
                   href="/dashboard"
@@ -83,6 +83,15 @@ export default async function DashboardPage({
                   Show last 7 days →
                 </Link>
               )}
+              <span aria-hidden className="smallcaps text-muted-foreground">
+                ·
+              </span>
+              <Link
+                href="/colophon"
+                className="smallcaps text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Colophon
+              </Link>
             </div>
           </>
         )}
