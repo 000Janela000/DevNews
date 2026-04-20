@@ -41,10 +41,23 @@ export default async function SavedPage() {
         ) : (
           <ul className="divide-y divide-border">
             {items.map((item) => (
-              <li key={item.id} className="py-4 first:pt-0 last:pb-0">
+              <li
+                key={item.id}
+                className="relative py-4 first:pt-0 last:pb-0"
+              >
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute right-0 top-4 z-10 inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground"
+                  aria-label={`Open original: ${item.title}`}
+                >
+                  original
+                  <ExternalLink className="size-3" strokeWidth={1.5} />
+                </a>
                 <Link
                   href={`/item/${item.id}`}
-                  className="block"
+                  className="block pr-20"
                   aria-label={item.title}
                 >
                   <div className="flex items-start gap-2.5">
@@ -79,16 +92,6 @@ export default async function SavedPage() {
                         addSuffix: true,
                       })}
                     </time>
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="ml-auto inline-flex items-center gap-1 hover:text-foreground"
-                    >
-                      original
-                      <ExternalLink className="size-3" strokeWidth={1.5} />
-                    </a>
                   </div>
                 </Link>
               </li>

@@ -108,10 +108,26 @@ export default async function DigestPage() {
 
                   <ul className="divide-y divide-border">
                     {catItems.map((item) => (
-                      <li key={item.id} className="py-3 first:pt-3 last:pb-0">
+                      <li
+                        key={item.id}
+                        className="relative py-3 first:pt-3 last:pb-0"
+                      >
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="absolute right-0 top-3 z-10 inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground"
+                          aria-label={`Open original: ${item.title}`}
+                        >
+                          original
+                          <ExternalLink
+                            className="size-3"
+                            strokeWidth={1.5}
+                          />
+                        </a>
                         <Link
                           href={`/item/${item.id}`}
-                          className="block"
+                          className="block pr-20"
                           aria-label={item.title}
                         >
                           <h3 className="text-[16px] font-semibold leading-[1.35] text-foreground">
@@ -145,19 +161,6 @@ export default async function DigestPage() {
                                 { addSuffix: true }
                               )}
                             </time>
-                            <a
-                              href={item.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="ml-auto inline-flex items-center gap-1 hover:text-foreground"
-                            >
-                              original
-                              <ExternalLink
-                                className="size-3"
-                                strokeWidth={1.5}
-                              />
-                            </a>
                           </div>
                         </Link>
                       </li>
