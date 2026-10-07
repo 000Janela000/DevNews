@@ -45,3 +45,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 *.png
+# Local Claude Code settings (can hold tokens; never commit)
+.claude/settings.local.json
